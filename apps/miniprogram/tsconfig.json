@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "types": ["miniprogram-api-typings"],
+    "lib": ["ES2020"],
+    "skipLibCheck": true,
+    "baseUrl": "."
+  },
+  "include": ["./**/*.ts"]
+}

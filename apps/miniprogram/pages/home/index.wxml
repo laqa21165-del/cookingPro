@@ -1,0 +1,61 @@
+<view class="container home-page">
+  <view class="hero-card">
+    <view>
+      <view class="eyebrow">首页</view>
+      <view class="hero-title">今天想吃什么？</view>
+      <view class="hero-copy">用文字付款。和厨师建立专属连接后，每一次点单都会被人认真阅读、好好回应—这是只属于你们的双向照顾。</view>
+    </view>
+    <view class="puppy-card">
+      <image class="puppy-img" src="/images/puppy.svg" mode="aspectFit" />
+      <view class="puppy-note">汪，今天的心意，我来替你送到。</view>
+    </view>
+    <view class="hero-actions">
+      <button class="primary-btn hero-btn" bindtap="prepareShare">邀请顾客绑定</button>
+      <button class="secondary-btn hero-btn" bindtap="goBindChef">绑定专属厨师</button>
+    </view>
+  </view>
+
+  <view wx:if="{{bindingConfirmed}}" class="notice-card">
+    <view class="notice-title">绑定确认成功</view>
+    <view class="notice-text">你已经和这位厨师建立关系，现在可以直接去点单了。</view>
+  </view>
+
+  <view wx:if="{{shareLink}}" class="card share-card">
+    <view class="eyebrow">模拟微信分享</view>
+    <view class="section-title share-title">把绑定链接发给顾客</view>
+    <view class="share-preview">
+      <view class="share-preview-title">分享后，对方会直接进入绑定确认页</view>
+      <view class="share-preview-copy">如果对方暂时不方便点开，也可以先复制这段短 token 给他。</view>
+    </view>
+    <view class="token-box">{{shareLink.token}}</view>
+    <view class="share-actions">
+      <button class="secondary-btn share-action-btn" bindtap="copyShareToken">复制 token</button>
+      <button class="primary-btn share-action-btn" open-type="share">分享给微信好友</button>
+    </view>
+  </view>
+
+  <view class="start-order-card" bindtap="directEnter">
+    <view class="start-order-title">开始点菜</view>
+    <view class="start-order-sub">和你的专属厨师，开始一次会被记住的点单</view>
+  </view>
+
+  <view class="card recent-card">
+    <view>
+      <view class="section-title no-gap">最近可点单的厨师</view>
+      <view class="muted">多对多绑定，当前已绑定 {{customerBindings.length}} 位</view>
+    </view>
+    <view wx:if="{{hasBindings}}" class="chef-grid">
+      <button wx:for="{{customerBindings}}" wx:key="chefId" class="chef-card" data-id="{{item.chefId}}" bindtap="chooseChef">
+        <view class="chef-avatar">{{item.avatarText}}</view>
+        <view class="chef-meta">
+          <view class="chef-name">{{item.displayName}}</view>
+          <view class="chef-copy">点进来就能继续点单</view>
+        </view>
+      </button>
+    </view>
+    <view wx:else class="empty-card">
+      <view class="empty-title">还没有绑定的厨师</view>
+      <view class="muted">先和一位厨师建立绑定关系，再开始点单。</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MyLove 点单 · 风格预览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #ECE7E0;
+    color: #2B2B2B;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+    gap: 24px;
+  }
+
+  /* ---------- 风格切换器 ---------- */
+  .switcher {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 18px 20px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  }
+  .switcher h1 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .switcher p { font-size: 12px; color: #8a8178; margin-bottom: 14px; line-height: 1.5; }
+  .theme-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .theme-btns button {
+    flex: 1 1 auto;
+    min-width: 100px;
+    border: 1.5px solid #e3ddd4;
+    background: #faf8f5;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5a524a;
+    cursor: pointer;
+    transition: all 200ms;
+  }
+  .theme-btns button:hover { border-color: #c9a98f; }
+  .theme-btns button.active { background: #3B251F; color: #fff; border-color: #3B251F; }
+  .palette { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
+  .palette span { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8a8178; }
+  .palette i { width: 16px; height: 16px; border-radius: 5px; display: inline-block; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
+
+  /* ---------- 手机外壳 ---------- */
+  .phone {
+    width: 390px;
+    height: 800px;
+    background: #111;
+    border-radius: 46px;
+    padding: 12px;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.28);
+    position: relative;
+  }
+  .screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 36px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- 主题变量 ---------- */
+  #preview[data-theme="earthy"] {
+    --bg: #F7F1E9; --card: #FFFCF8; --ink: #3B251F; --muted: #8E6F67;
+    --accent: #C67B5C; --accent-deep: #A8512F; --price: #7A3428;
+    --tag-bg: rgba(198,123,92,0.14); --tag-ink: #9A5638;
+    --border: rgba(124,86,68,0.10); --shadow: 0 10px 30px rgba(124,86,68,0.10);
+    --img-bg: linear-gradient(135deg,#F1E2D4,#E7D2BF); --serif: 'Noto Sans SC';
+  }
+  #preview[data-theme="ink"] {
+    --bg: #F3EEE6; --card: #FBF8F2; --ink: #2B2B2B; --muted: #7A7068;
+    --accent: #9A2E2E; --accent-deep: #7A1F1F; --price: #9A2E2E;
+    --tag-bg: rgba(154,46,46,0.10); --tag-ink: #9A2E2E;
+    --border: rgba(43,43,43,0.10); --shadow: 0 10px 30px rgba(43,43,43,0.08);
+    --img-bg: linear-gradient(135deg,#EAE3D8,#DCD2C4); --serif: 'Noto Serif SC';
+  }
+  #preview[data-theme="cafe"] {
+    --bg: #F5EFE6; --card: #FFFDF9; --ink: #3A2A1E; --muted: #92765E;
+    --accent: #8B5E3C; --accent-deep: #5C3A21; --price: #8B5E3C;
+    --tag-bg: rgba(139,94,60,0.14); --tag-ink: #8B5E3C;
+    --border: rgba(92,58,33,0.12); --shadow: 0 10px 30px rgba(92,58,33,0.10);
+    --img-bg: linear-gradient(135deg,#EAD9C4,#DBC4A6); --serif: 'Noto Sans SC';
+  }
+
+  /* ---------- 屏幕内容 ---------- */
+  #preview { height: 100%; display: flex; flex-direction: column; background: var(--bg); }
+  .scroll { flex: 1; overflow-y: auto; padding: 20px 18px 110px; display: flex; flex-direction: column; gap: 16px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  .topbar { display: flex; align-items: center; gap: 10px; }
+  .topbar .back { width: 30px; height: 30px; display:flex; align-items:center; justify-content:center; color: var(--ink); font-size: 20px; }
+  .topbar .title { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: 1px; }
+
+  .card { background: var(--card); border-radius: 22px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+
+  .hint { font-size: 12px; color: var(--muted); line-height: 1.55; }
+  .eyebrow { font-size: 12px; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+  .section-title { font-family: var(--serif); font-size: 18px; font-weight: 700; color: var(--ink); }
+
+  /* 厨师选择 */
+  .chef-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+  .chef-strip::-webkit-scrollbar { height: 0; }
+  .chef-pill {
+    flex: none; padding: 9px 18px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    background: rgba(255,255,255,0.7); border: 1px solid var(--border); color: var(--muted); white-space: nowrap;
+  }
+  .chef-pill.active { background: var(--ink); color: #fff8f1; border-color: var(--ink); }
+
+  /* 搜索框 */
+  .search { display: flex; align-items: center; gap: 8px; padding: 12px 16px; }
+  .search input { border: 0; outline: 0; flex: 1; background: transparent; font-size: 14px; color: var(--ink); font-family: inherit; }
+  .search svg { flex: none; }
+
+  /* 菜品卡片 */
+  .menu-card { overflow: hidden; }
+  .menu-row { display: flex; gap: 16px; padding: 14px; align-items: flex-start; }
+  .menu-image {
+    width: 96px; height: 96px; border-radius: 16px; flex: none;
+    background: var(--img-bg); position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .menu-image svg { opacity: 0.5; }
+  .menu-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .menu-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .menu-name { font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .menu-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .menu-price { font-size: 14px; font-weight: 700; color: var(--price); white-space: nowrap; }
+  .menu-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+  .menu-tag { font-size: 11px; color: var(--tag-ink); background: var(--tag-bg); padding: 3px 9px; border-radius: 999px; }
+
+  /* stepper */
+  .stepper { display: flex; align-items: center; gap: 8px; }
+  .step-btn {
+    width: 28px; height: 28px; border-radius: 8px; background: rgba(198,123,92,0.12);
+    color: var(--price); display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; cursor: pointer; transition: transform 120ms, opacity 150ms; user-select: none;
+  }
+  .step-btn:active { transform: scale(0.9); }
+  .step-btn.is-disabled { opacity: 0.3; pointer-events: none; }
+  .step-count { min-width: 20px; text-align: center; font-size: 15px; font-weight: 600; color: var(--ink); }
+
+  /* 浮动购物车 */
+  .floating-cart {
+    position: absolute; left: 16px; right: 16px; bottom: 18px;
+    background: var(--ink); color: #fff8f4; border-radius: 18px;
+    padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.25);
+  }
+  .floating-cart .ft { font-size: 13px; font-weight: 700; }
+  .floating-cart .fc { font-size: 11px; color: rgba(255,248,244,0.72); margin-top: 2px; }
+  .floating-cart .fa { font-size: 13px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+
+  .legend { font-size: 11px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+
+  <div class="switcher">
+    <h1>MyLove 点单 · 视觉风格预览</h1>
+    <p>点击下方按钮切换三种风格，右侧手机实时预览效果。配色与字体均已按"美食 / 温暖 / 治愈"调性筛选。</p>
+    <div class="theme-btns">
+      <button data-t="earthy" class="active">原木暖阳</button>
+      <button data-t="ink">新中式雅致</button>
+      <button data-t="cafe">咖啡馆手作</button>
+    </div>
+    <div class="palette" id="palette"></div>
+  </div>
+
+  <div class="phone">
+    <div class="screen">
+      <div id="preview" data-theme="earthy">
+        <div class="scroll">
+          <div class="topbar">
+            <div class="back">‹</div>
+            <div class="title">点单</div>
+          </div>
+
+          <div class="card" style="padding:16px; display:flex; flex-direction:column; gap:12px;">
+            <div>
+              <div class="eyebrow">先选择一位厨师</div>
+              <div class="section-title">今天想吃点什么</div>
+            </div>
+            <div class="chef-strip">
+              <div class="chef-pill active">阿岚的厨房</div>
+              <div class="chef-pill">老周私房菜</div>
+              <div class="chef-pill">小满食堂</div>
+            </div>
+          </div>
+
+          <div class="card search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input placeholder="搜索菜名或描述" />
+          </div>
+
+          <!-- 菜品卡片 1：有图 -->
+          <div class="card menu-card">
+            <div class="menu-row">
+              <div class="menu-image">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9A5638" stroke-width="1.5"><path d="M3 11h18a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8Z"/><path d="M12 3v3M9 5l3-2 3 2"/></svg>
+              </div>
+              <div class="menu-content">
+                <div class="menu-head">
+                  <div class="menu-name">焦糖布丁</div>
+                  <div class="menu-price">16 字</div>
+                </div>
+                <div class="menu-desc">像回味一样温柔的甜点。</div>
+                <div class="menu-foot">
+                  <div class="menu-tag">可下单</div>
+                  <div class="stepper">
+                    <div class="step-btn" onclick="this.nextElementSibling.textContent=Math.max(0,+this.nextElementSibling.textContent-1)">−</div>
+                    <div class="step-count">2</div>
+                    <div class="step-btn" onclick="this.previousElementSibling.textContent=+this.previousElementSibling.textContent+1">+</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 菜品卡片 2：有图 -->
+          <div class="card menu-card">
+            <div class="menu-row">
+              <div class="menu-image">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9A5638" stroke-width="1.5"><path d="M4 14h16M5 14c0-4 3-7 7-7s7 3 7 7"/><path d="M3 19h18"/></svg>
+              </div>
+              <div class="menu-content">
+                <div class="menu-head">
+                  <div class="menu-name">番茄牛腩饭</div>
+                  <div class="menu-price">28 字</div>
+                </div>
+                <div class="menu-desc">慢炖三小时，汤汁裹住每一粒米。</div>
+                <div class="menu-foot">
+                  <div class="menu-tag">可下单</div>
+                  <div class="stepper">
+                    <div class="step-btn is-disabled">−</div>
+                    <div class="step-count">0</div>
+                    <div class="step-btn" onclick="this.previousElementSibling.textContent=+this.previousElementSibling.textContent+1">+</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 菜品卡片 3：无图（验证占位一致） -->
+          <div class="card menu-card">
+            <div class="menu-row">
+              <div class="menu-image">
+                <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#9A5638" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 15l5-5 4 4 3-3 4 4"/></svg>
+              </div>
+              <div class="menu-content">
+                <div class="menu-head">
+                  <div class="menu-name">测试菜品</div>
+                  <div class="menu-price">12 字</div>
+                </div>
+                <div class="menu-desc">这是一道还没有上传图片的菜。</div>
+                <div class="menu-foot">
+                  <div class="menu-tag">可下单</div>
+                  <div class="stepper">
+                    <div class="step-btn is-disabled">−</div>
+                    <div class="step-count">0</div>
+                    <div class="step-btn" onclick="this.previousElementSibling.textContent=+this.previousElementSibling.textContent+1">+</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="legend">— 三种风格均为同一套布局，仅换肤 —</div>
+        </div>
+
+        <div class="floating-cart">
+          <div>
+            <div class="ft">2 份菜品已加入购物车</div>
+            <div class="fc">当前需要至少写 60 个字才能下单</div>
+          </div>
+          <div class="fa">查看 ›</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const palettes = {
+    earthy: [['#F7F1E9','背景'],['#FFFCF8','卡片'],['#C67B5C','主色'],['#7A3428','价格']],
+    ink:   [['#F3EEE6','背景'],['#FBF8F2','卡片'],['#9A2E2E','印章红'],['#2B2B2B','墨色']],
+    cafe:  [['#F5EFE6','背景'],['#FFFDF9','卡片'],['#8B5E3C','咖啡棕'],['#C99A4E','暖金']],
+  };
+  const preview = document.getElementById('preview');
+  const paletteEl = document.getElementById('palette');
+  function renderPalette(t){
+    paletteEl.innerHTML = palettes[t].map(([c,n]) =>
+      `<span><i style="background:${c}"></i>${n}</span>`).join('');
+  }
+  document.querySelectorAll('.theme-btns button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.theme-btns button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      const t = b.dataset.t;
+      preview.dataset.theme = t;
+      renderPalette(t);
+    });
+  });
+  renderPalette('earthy');
+</script>
+</body>
+</html>

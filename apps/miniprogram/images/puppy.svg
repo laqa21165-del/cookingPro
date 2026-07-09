@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="可爱小狗">
+  <defs>
+    <radialGradient id="face" cx="50%" cy="40%" r="64%">
+      <stop offset="0%" stop-color="#fff7f0"/>
+      <stop offset="72%" stop-color="#f8dac5"/>
+      <stop offset="100%" stop-color="#eebd9f"/>
+    </radialGradient>
+    <linearGradient id="ear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d29376"/>
+      <stop offset="100%" stop-color="#a8674d"/>
+    </linearGradient>
+    <radialGradient id="cheek" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff9d8a"/>
+      <stop offset="100%" stop-color="#ff9d8a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 立式耳朵 -->
+  <ellipse cx="60" cy="74" rx="29" ry="45" fill="url(#ear)" transform="rotate(-16 60 74)"/>
+  <ellipse cx="180" cy="74" rx="29" ry="45" fill="url(#ear)" transform="rotate(16 180 74)"/>
+  <ellipse cx="63" cy="82" rx="14" ry="27" fill="#f3c3ad" transform="rotate(-16 63 82)"/>
+  <ellipse cx="177" cy="82" rx="14" ry="27" fill="#f3c3ad" transform="rotate(16 177 82)"/>
+
+  <!-- 脸（圆脸） -->
+  <ellipse cx="120" cy="134" rx="84" ry="78" fill="url(#face)"/>
+
+  <!-- 头顶呆毛 -->
+  <path d="M120 60 q-7 -19 5 -23 q9 5 4 23 z" fill="#e6b18f"/>
+
+  <!-- 腮红 -->
+  <ellipse cx="73" cy="153" rx="20" ry="12" fill="url(#cheek)"/>
+  <ellipse cx="167" cy="153" rx="20" ry="12" fill="url(#cheek)"/>
+
+  <!-- 眼睛 -->
+  <ellipse cx="92" cy="126" rx="14" ry="16.5" fill="#3a2a24"/>
+  <ellipse cx="148" cy="126" rx="14" ry="16.5" fill="#3a2a24"/>
+  <circle cx="97" cy="120" r="5" fill="#ffffff"/>
+  <circle cx="153" cy="120" r="5" fill="#ffffff"/>
+  <circle cx="88" cy="132" r="2.6" fill="#ffffff" opacity="0.85"/>
+  <circle cx="144" cy="132" r="2.6" fill="#ffffff" opacity="0.85"/>
+
+  <!-- 鼻子 -->
+  <ellipse cx="120" cy="150" rx="13" ry="9.5" fill="#5a3a31"/>
+  <ellipse cx="115" cy="146.5" rx="4" ry="2.6" fill="#8a604f"/>
+
+  <!-- 嘴 -->
+  <path d="M120 159 L120 167 M120 167 Q106 181 95 171 M120 167 Q134 181 145 171"
+        fill="none" stroke="#5a3a31" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 舌头 -->
+  <path d="M112 173 Q120 191 128 173 Q128 185 120 187 Q112 185 112 173 Z" fill="#f48a8a"/>
+  <path d="M120 176 L120 186" stroke="#d96f6f" stroke-width="2" stroke-linecap="round"/>
+</svg>

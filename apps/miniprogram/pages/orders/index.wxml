@@ -1,0 +1,32 @@
+<view class="container orders-page">
+  <view class="card orders-filter-card">
+    <view class="section-title">查看订单</view>
+    <view class="muted">下单菜品、支付文字、回复和评价都会沉淀在这里。</view>
+    <view class="mode-tabs">
+      <button class="{{customerTabClass}}" data-role="customer" bindtap="switchRole">我下的订单</button>
+      <button class="{{chefTabClass}}" data-role="chef" bindtap="switchRole">我收到的订单</button>
+    </view>
+  </view>
+
+  <view wx:if="{{hasOrders}}" class="orders-list">
+    <view wx:for="{{orders}}" wx:key="id" class="card order-card" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="order-head">
+        <view class="order-title">订单 {{item.shortId}}</view>
+        <view class="order-state-group">
+          <view wx:if="{{item.showNewBadge}}" class="new-badge">新订单</view>
+          <view class="{{item.statusClass}}">{{item.statusText}}</view>
+        </view>
+      </view>
+      <view class="order-line">{{item.itemsText}}</view>
+      <view class="order-meta">
+        <view class="muted order-time">{{item.createdAt}}</view>
+        <view class="muted order-notify">{{item.notifyStatusText}}</view>
+      </view>
+    </view>
+  </view>
+  <view wx:else class="card empty-order-card">
+    <view class="empty-title">{{emptyTitle}}</view>
+    <view class="muted">{{emptyCopy}}</view>
+    <button class="secondary-btn full-btn" bindtap="goOrder">去点菜</button>
+  </view>
+</view>

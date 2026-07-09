@@ -1,0 +1,11 @@
+<view class="container menu-create-page">
+  <view class="card form-card">
+    <view class="section-title">新增菜品</view>
+    <input class="input" data-field="name" placeholder="菜品名称" value="{{form.name}}" bindinput="onFieldInput" />
+    <input class="input" data-field="textPrice" type="number" placeholder="下单所需字数" value="{{form.textPrice}}" bindinput="onFieldInput" />
+    <textarea class="textarea" data-field="description" placeholder="菜品描述" value="{{form.description}}" bindinput="onFieldInput"></textarea>
+    <button class="secondary-btn" loading="{{uploading}}" bindtap="chooseImage">上传菜品图片</button>
+    <image wx:if="{{form.imageUrl}}" class="preview-image" src="{{form.imageUrl}}" mode="aspectFill" />
+    <button class="primary-btn" bindtap="submit">保存菜品</button>
+  </view>
+</view>

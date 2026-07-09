@@ -1,0 +1,36 @@
+.detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.detail-strong,
+.review-role {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.snapshot-row,
+.review-item {
+  display: grid;
+  gap: 12rpx;
+  padding: 12rpx 0;
+}
+
+.snapshot-row {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.detail-text {
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.review-image {
+  width: 100%;
+  height: 240rpx;
+  border-radius: 20rpx;
+  background: #f4e6db;
+}

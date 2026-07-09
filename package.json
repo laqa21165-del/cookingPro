@@ -1,0 +1,30 @@
+{
+  "name": "word-order-demo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "dev:prototype": "vite",
+    "build:prototype": "vite build",
+    "dev:infra": "docker compose -p mylove -f infra/docker/docker-compose.dev.yml up -d",
+    "dev:infra:down": "docker compose -p mylove -f infra/docker/docker-compose.dev.yml down",
+    "dev:api": "npm run start:dev --workspace @mylove/api",
+    "build:api": "npm run build --workspace @mylove/api",
+    "prisma:generate": "npm run prisma:generate --workspace @mylove/api",
+    "prisma:migrate": "npm run prisma:migrate --workspace @mylove/api",
+    "typecheck:mini": "npm run typecheck --workspace @mylove/miniprogram"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.0.3",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "vite": "^8.1.3"
+  }
+}

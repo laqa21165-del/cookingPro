@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MyLove 小程序首页重设计提案</title>
+<style>
+  :root {
+    --paper: #f3ede7;
+    --ink: #34241d;
+    --muted: #8a6f63;
+    --accent: #c96e51;
+    --accent-deep: #a65239;
+    --accent-soft: rgba(201, 110, 81, 0.12);
+    --shadow: 0 22px 60px rgba(96, 60, 44, 0.12);
+    --radius-xl: 30px;
+    --radius-lg: 24px;
+    --radius-md: 18px;
+    --radius-pill: 999px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    min-height: 100vh;
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(255, 214, 192, 0.8), transparent 28%),
+      radial-gradient(circle at right 12%, rgba(255, 238, 224, 0.9), transparent 24%),
+      linear-gradient(180deg, var(--paper), #efe7df 52%, #e8ddd3 100%);
+    padding: 36px 20px 56px;
+  }
+
+  .board {
+    max-width: 1220px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(320px, 380px) minmax(320px, 420px) 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .panel,
+  .note,
+  .phone-shell {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    box-shadow: var(--shadow);
+  }
+
+  .panel,
+  .note {
+    background: rgba(255, 252, 249, 0.76);
+    backdrop-filter: blur(18px);
+    border-radius: 28px;
+    padding: 26px;
+  }
+
+  .panel::before,
+  .note::before,
+  .phone-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.78), transparent 28%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 42%);
+    pointer-events: none;
+  }
+
+  .panel {
+    display: grid;
+    gap: 18px;
+  }
+
+  .label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: start;
+    border-radius: var(--radius-pill);
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--accent-deep);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .label i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #efab92, var(--accent));
+    box-shadow: 0 0 0 6px rgba(201, 110, 81, 0.08);
+  }
+
+  .title {
+    font-size: 34px;
+    line-height: 1.12;
+    letter-spacing: -0.04em;
+    font-weight: 800;
+  }
+
+  .intro {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .stack {
+    display: grid;
+    gap: 12px;
+  }
+
+  .bullet {
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(132, 95, 81, 0.08);
+  }
+
+  .bullet strong,
+  .swatch strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .bullet span,
+  .swatch span {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .swatch {
+    padding: 12px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(132, 95, 81, 0.08);
+  }
+
+  .swatch-chip {
+    width: 100%;
+    height: 56px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  .note {
+    display: grid;
+    gap: 14px;
+  }
+
+  .note h2 {
+    font-size: 16px;
+    letter-spacing: 0.01em;
+  }
+
+  .note p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .phone-shell {
+    margin: 0 auto;
+    width: 418px;
+    padding: 12px;
+    border-radius: 40px;
+    background: linear-gradient(180deg, #201b1b, #0e0b0a);
+    box-shadow: 0 42px 100px rgba(33, 20, 16, 0.36);
+  }
+
+  .phone {
+    position: relative;
+    height: 836px;
+    border-radius: 30px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at top left, rgba(255, 214, 195, 0.82), transparent 34%),
+      radial-gradient(circle at bottom right, rgba(242, 210, 193, 0.68), transparent 28%),
+      linear-gradient(180deg, #fff8f3 0%, #f4ece5 52%, #eee2d7 100%);
+  }
+
+  .status {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 2;
+  }
+
+  .status-title {
+    flex: 1;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .capsule {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: var(--radius-pill);
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.68);
+    border: 1px solid rgba(104, 79, 68, 0.1);
+  }
+
+  .capsule-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #1d1918;
+    box-shadow: 8px 0 0 #1d1918, 16px 0 0 #1d1918;
+  }
+
+  .capsule-ring {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #1d1918;
+    position: relative;
+  }
+
+  .capsule-ring::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: #1d1918;
+  }
+
+  .screen {
+    height: 100%;
+    padding: 58px 10px 110px;
+    overflow: auto;
+  }
+
+  .screen::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .flow {
+    display: grid;
+    gap: 12px;
+  }
+
+  .hero-card,
+  .share-card,
+  .recent-card {
+    background: linear-gradient(180deg, rgba(255, 252, 249, 0.92), rgba(255, 248, 244, 0.82));
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.88);
+    box-shadow: 0 18px 36px rgba(124, 86, 68, 0.08);
+  }
+
+  .hero-card,
+  .share-card,
+  .recent-card {
+    padding: 16px;
+    display: grid;
+    gap: 14px;
+  }
+
+  .hero-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .eyebrow {
+    color: var(--accent-deep);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .mini-tag {
+    padding: 6px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .hero-title {
+    font-size: 24px;
+    line-height: 1.18;
+    letter-spacing: -0.04em;
+    font-weight: 800;
+  }
+
+  .hero-copy,
+  .meta,
+  .puppy-note,
+  .share-preview-copy,
+  .cta-sub,
+  .chef-copy {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.68;
+  }
+
+  .hero-copy {
+    font-size: 14px;
+    line-height: 1.72;
+  }
+
+  .promise {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(122, 90, 77, 0.08);
+  }
+
+  .promise-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 12px;
+    background: linear-gradient(135deg, #f0a58d, var(--accent));
+  }
+
+  .promise-text {
+    font-size: 12px;
+    color: #71584d;
+    font-weight: 600;
+  }
+
+  .puppy-card {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255, 249, 245, 0.98), rgba(255, 244, 238, 0.88));
+    border: 1px solid rgba(255, 255, 255, 0.86);
+  }
+
+  .puppy {
+    width: 58px;
+    height: 58px;
+    flex: none;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255, 233, 221, 0.86), rgba(255, 255, 255, 0.7));
+    display: grid;
+    place-items: center;
+  }
+
+  .puppy img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .hero-actions,
+  .share-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-primary {
+    color: #fff9f5;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+    box-shadow: 0 10px 20px rgba(173, 88, 61, 0.22);
+  }
+
+  .btn-secondary {
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(116, 86, 73, 0.12);
+  }
+
+  .share-title {
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 800;
+  }
+
+  .share-preview {
+    position: relative;
+    padding: 14px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255, 244, 237, 0.88), rgba(255, 250, 246, 0.98));
+    overflow: hidden;
+  }
+
+  .share-preview::after {
+    content: "";
+    position: absolute;
+    inset: auto -24px -24px auto;
+    width: 94px;
+    height: 94px;
+    border-radius: 50%;
+    background: rgba(201, 110, 81, 0.08);
+  }
+
+  .share-preview-title {
+    font-size: 14px;
+    line-height: 1.55;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .token-box {
+    padding: 14px;
+    border-radius: 16px;
+    text-align: center;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    border: 1px dashed rgba(201, 110, 81, 0.42);
+    background: rgba(255, 255, 255, 0.78);
+  }
+
+  .cta-card {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 18px;
+    border-radius: 22px;
+    background:
+      radial-gradient(circle at top left, rgba(255, 210, 189, 0.24), transparent 24%),
+      linear-gradient(135deg, #d48362 0%, #b96248 48%, #99513d 100%);
+    box-shadow: 0 18px 38px rgba(155, 84, 59, 0.22);
+    text-align: center;
+    color: #fff8f4;
+  }
+
+  .cta-badge {
+    display: inline-flex;
+    margin-bottom: 10px;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .cta-title {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1.18;
+  }
+
+  .cta-sub {
+    color: rgba(255, 248, 244, 0.82);
+    margin-top: 8px;
+  }
+
+  .chef-row {
+    display: grid;
+    gap: 10px;
+  }
+
+  .chef-card {
+    display: grid;
+    grid-template-columns: 58px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255, 248, 242, 0.94), rgba(255, 243, 236, 0.86));
+    border: 1px solid rgba(255, 255, 255, 0.92);
+  }
+
+  .chef-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: rgba(201, 110, 81, 0.14);
+    color: var(--accent-deep);
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .chef-name {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .chef-arrow {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--accent-deep);
+    font-size: 18px;
+  }
+
+  .tabbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 16px 18px 26px;
+    background: rgba(255, 249, 244, 0.88);
+    backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(109, 81, 68, 0.08);
+  }
+
+  .tab {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    color: #7d665a;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .tab::before {
+    content: "";
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
+    background: rgba(165, 118, 99, 0.14);
+  }
+
+  .tab.active {
+    color: var(--accent-deep);
+  }
+
+  .tab.active::before {
+    background: linear-gradient(135deg, rgba(201, 110, 81, 0.22), rgba(201, 110, 81, 0.1));
+    box-shadow: inset 0 0 0 1px rgba(201, 110, 81, 0.18);
+  }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 132px;
+    height: 5px;
+    border-radius: var(--radius-pill);
+    background: rgba(28, 22, 20, 0.82);
+  }
+
+  @media (max-width: 1140px) {
+    .board {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+
+    .panel,
+    .note {
+      width: min(100%, 680px);
+    }
+  }
+
+  @media (max-width: 460px) {
+    body {
+      padding-inline: 12px;
+    }
+
+    .phone-shell {
+      width: 100%;
+    }
+
+    .phone {
+      height: 780px;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="board">
+    <section class="panel">
+      <span class="label"><i></i> DESIGN READ / 首页提案</span>
+      <h1 class="title">把现在这版首页，升级成更像“有品牌感的餐饮服务产品”。</h1>
+      <p class="intro">
+        这版提案保留了当前小程序的暖调、陪伴感和低门槛结构，但把视觉重心从“朴素功能页”
+        提升到了“可成交、可分享、可记住”的商业化首页。组件体量尽量贴近现状，主要升级层级、材质、转化感和品牌记忆点。
+      </p>
+
+      <div class="stack">
+        <div class="bullet">
+          <strong>方向关键词</strong>
+          <span>温柔餐饮品牌、礼物感服务、细腻陪伴、轻熟商业感。</span>
+        </div>
+        <div class="bullet">
+          <strong>尽量不动的部分</strong>
+          <span>双按钮操作区、分享卡结构、开始点菜大 CTA、底部四栏导航和卡片式模块顺序。</span>
+        </div>
+        <div class="bullet">
+          <strong>重点升级</strong>
+          <span>首屏更有“欢迎仪式感”，分享区更像真实转化模块，CTA 更像能推动下单的品牌按钮。</span>
+        </div>
+      </div>
+
+      <div class="palette">
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#f7f1ea;"></div>
+          <strong>Paper Sand</strong>
+          <span>柔和底色，保持温暖但更克制。</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#fffaf6;"></div>
+          <strong>Milk Surface</strong>
+          <span>高透卡片面，带轻微玻璃感。</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:linear-gradient(135deg,#cf7b5e,#ab563b);"></div>
+          <strong>Signature Clay</strong>
+          <span>主视觉和主 CTA 用统一暖陶色。</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#3a2821;"></div>
+          <strong>Deep Cocoa</strong>
+          <span>标题和重要信息更稳，更像成熟产品。</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="note">
+      <h2>这版为什么会更“商业化”</h2>
+      <p>首屏增加了一个轻运营感的品牌承诺条，让用户一进来就知道这不是普通的文字工具，而是一种“被认真回应”的点单关系。</p>
+      <p>按钮、卡片和底栏都统一到同一套圆角和同一主色逻辑，减少“组件像拼起来的”感觉。</p>
+      <p>分享区不再只是一个 token 容器，而是更像真实的邀请转化模块，信息先后顺序也更利于理解和操作。</p>
+      <p>开始点菜这块强化成了品牌主行动区，视觉上更像一次“正式进入服务”的入口，不只是一个普通大按钮。</p>
+      <p>如果你认可这个方向，下一步我可以再把同一语言延展到订单、菜单、我的几个核心页，保证整套小程序统一起来。</p>
+    </aside>
+
+    <section class="phone-shell">
+      <div class="phone">
+        <div class="status">
+          <div style="width:70px;"></div>
+          <div class="status-title">首页</div>
+          <div class="capsule">
+            <span class="capsule-dot"></span>
+            <span class="capsule-ring"></span>
+          </div>
+        </div>
+
+        <div class="screen">
+          <div class="flow">
+            <article class="hero-card">
+              <div class="hero-topline">
+                <div class="eyebrow">HOME</div>
+                <div class="mini-tag">专属点单体验</div>
+              </div>
+
+              <div>
+                <h2 class="hero-title">今天想吃什么？</h2>
+                <p class="hero-copy">用文字付费，和厨师建立专属连接。每一次点单都像一份被认真回应的小心意，简单，但更有温度。</p>
+              </div>
+
+              <div class="promise">
+                <span class="promise-badge">心</span>
+                <span class="promise-text">今日宜：被认真惦记，也被认真投喂。</span>
+              </div>
+
+              <div class="puppy-card">
+                <div class="puppy">
+                  <img src="../apps/miniprogram/images/puppy.svg" alt="陪伴形象" />
+                </div>
+                <p class="puppy-note">汪，今天的心意，我来替你送到。你只管开口，剩下的交给这份专属回应。</p>
+              </div>
+
+              <div class="hero-actions">
+                <div class="btn btn-primary">邀请顾客绑定</div>
+                <div class="btn btn-secondary">绑定专属厨师</div>
+              </div>
+            </article>
+
+            <article class="share-card">
+              <div class="eyebrow">WECHAT SHARE</div>
+              <div>
+                <h3 class="share-title">把绑定链接发给顾客</h3>
+                <p class="meta">分享后，对方会直接进入绑定确认页，动作更短，理解成本更低。</p>
+              </div>
+
+              <div class="share-preview">
+                <div class="share-preview-title">如果对方当下不方便点开，也可以先复制一段短 token 发过去。</div>
+                <div class="share-preview-copy">这块做成更像真实营销卡片的结构，阅读顺序更清晰，也更像成型产品。</div>
+              </div>
+
+              <div class="token-box">J5TDKQ</div>
+
+              <div class="share-actions">
+                <div class="btn btn-secondary">复制 token</div>
+                <div class="btn btn-primary">分享给微信好友</div>
+              </div>
+            </article>
+
+            <article class="cta-card">
+              <div class="cta-badge">START ORDER</div>
+              <div class="cta-title">开始点菜</div>
+              <div class="cta-sub">和你的专属厨师，开始一次会被记住的点单。</div>
+            </article>
+
+            <article class="recent-card">
+              <div>
+                <div class="eyebrow">RECENT BINDINGS</div>
+                <h3 class="share-title">最近可点单的厨师</h3>
+                <p class="meta">保留原来的结构，但让列表本身更像品牌服务目录。</p>
+              </div>
+
+              <div class="chef-row">
+                <div class="chef-card">
+                  <div class="chef-avatar">阿鹿</div>
+                  <div>
+                    <div class="chef-name">阿鹿的小厨房</div>
+                    <div class="chef-copy">点击进入，继续这段已经建立好的专属点单关系。</div>
+                  </div>
+                  <div class="chef-arrow">›</div>
+                </div>
+
+                <div class="chef-card">
+                  <div class="chef-avatar">周</div>
+                  <div>
+                    <div class="chef-name">周师傅私房菜</div>
+                    <div class="chef-copy">保留现有组件大小，只把卡片质感和节奏做成熟。</div>
+                  </div>
+                  <div class="chef-arrow">›</div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <nav class="tabbar">
+          <div class="tab active">首页</div>
+          <div class="tab">订单</div>
+          <div class="tab">菜单</div>
+          <div class="tab">我的</div>
+        </nav>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

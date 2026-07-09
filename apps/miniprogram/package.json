@@ -1,0 +1,15 @@
+{
+  "name": "@mylove/miniprogram",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "tdesign-miniprogram": "^1.9.4"
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "^4.0.7",
+    "typescript": "^5.9.2"
+  }
+}

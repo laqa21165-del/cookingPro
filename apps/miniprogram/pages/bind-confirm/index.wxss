@@ -1,0 +1,32 @@
+.bind-card {
+  display: grid;
+  gap: 18rpx;
+}
+
+.token-box {
+  padding: 20rpx 22rpx;
+  border-radius: 18rpx;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1rpx dashed rgba(203, 109, 90, 0.34);
+  font-size: 30rpx;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-align: center;
+  word-break: break-all;
+}
+
+.token-input {
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+
+.full-btn {
+  width: 100%;
+}
+
+.result-text {
+  color: #b85b46;
+  font-size: 27rpx;
+  line-height: 1.5;
+}

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>首页商业版改造样例</title>
+<style>
+  :root{
+    --accent:#C67B5C; --accent-strong:#B0654B; --accent-soft:#F7EAE1;
+    --ink:#3B251F; --sub:#8E6F67; --line:rgba(155,103,84,.12);
+    --bg:#F6EFE7; --card:#FFFCF8; --ok:#4B8B60; --warn:#C98A2E;
+    --r-lg:20px; --r-md:14px; --r-sm:10px; --sp:12px;
+    --serif:"Noto Serif SC",serif; --sans:"PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:#efe6db;color:var(--ink);
+    padding:36px 20px 60px;-webkit-font-smoothing:antialiased}
+  .page-head{max-width:900px;margin:0 auto 30px;text-align:center}
+  .page-head h1{font-family:var(--serif);font-size:28px;font-weight:700;letter-spacing:.02em}
+  .page-head p{margin-top:10px;color:#7a685f;font-size:14px;line-height:1.7}
+  .stage{display:flex;gap:44px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+  .col{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .col-tag{font-size:13px;font-weight:600;padding:5px 16px;border-radius:999px}
+  .tag-before{background:#efe1da;color:#9a6b58}
+  .tag-after{background:var(--accent);color:#fff}
+
+  /* phone frame */
+  .phone{width:340px;height:720px;border-radius:44px;background:#2c211c;
+    padding:12px;box-shadow:0 30px 60px rgba(70,45,32,.28);position:relative}
+  .screen{width:100%;height:100%;border-radius:34px;overflow:hidden;background:var(--bg);
+    position:relative;display:flex;flex-direction:column}
+  .statusbar{height:40px;flex:none;display:flex;align-items:center;justify-content:space-between;
+    padding:0 22px;font-size:12px;font-weight:600;color:var(--ink)}
+  .statusbar .dots{display:flex;gap:4px;align-items:center}
+  .statusbar .bar{width:16px;height:8px;border:1.5px solid var(--ink);border-radius:2px}
+  .body{flex:1;overflow-y:auto;padding:14px 14px 84px}
+  .body::-webkit-scrollbar{display:none}
+
+  /* ==== BEFORE (still uses old feel) ==== */
+  .b-hero{background:linear-gradient(145deg,#fff,#ffece1);border-radius:22px;padding:18px 16px;
+    border:1px solid #fff;box-shadow:0 8px 20px rgba(124,86,68,.08);margin-bottom:14px}
+  .b-eyebrow{font-size:11px;letter-spacing:.14em;color:var(--sub);margin-bottom:6px}
+  .b-title{font-size:23px;font-weight:800;letter-spacing:-.02em}
+  .b-copy{margin-top:8px;font-size:13px;color:var(--sub);line-height:1.6}
+  .b-puppy{display:flex;gap:10px;align-items:center;background:rgba(255,248,242,.9);
+    border-radius:14px;padding:10px;margin-top:12px}
+  .b-puppy svg{width:52px;height:52px;flex:none}
+  .b-puppy span{font-size:12px;color:var(--sub);line-height:1.5}
+  .b-actions{display:flex;gap:10px;margin-top:12px}
+  .b-actions button{flex:1;height:42px;border:none;border-radius:12px;font-size:13px;font-weight:600}
+  .b-btn1{background:var(--accent);color:#fff}
+  .b-btn2{background:#e7d7ce;color:#7a5a4a}
+  .b-start{margin:14px 0;background:linear-gradient(135deg,#C67B5C,#B0654B);border-radius:22px;
+    padding:26px;text-align:center;box-shadow:0 12px 26px rgba(160,90,60,.28)}
+  .b-start .t{font-size:26px;font-weight:800;color:#fff7f0}
+  .b-start .s{margin-top:6px;font-size:12px;color:rgba(255,247,240,.86)}
+  .b-recent{background:#fffcf8;border-radius:22px;padding:16px;box-shadow:0 8px 20px rgba(124,86,68,.06)}
+  .b-recent .h{font-size:18px;font-weight:800}
+  .b-recent .m{font-size:12px;color:var(--sub);margin-top:4px;margin-bottom:12px}
+  .b-chef{display:flex;gap:12px;align-items:center;background:linear-gradient(145deg,#fff5f0,#ffe3d6);
+    border-radius:18px;padding:12px;margin-bottom:8px}
+  .b-chef .av{width:46px;height:46px;border-radius:14px;background:rgba(203,109,90,.14);color:#984635;
+    font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+  .b-chef .nm{font-size:15px;font-weight:800}
+  .b-chef .cp{font-size:11px;color:var(--sub);margin-top:3px}
+  .b-gap{height:120px;display:flex;align-items:center;justify-content:center;color:#c3b1a6;
+    font-size:12px;border:1px dashed #d8c6ba;border-radius:14px;margin-top:14px}
+
+  /* ==== AFTER (commercial) ==== */
+  .a-top{display:flex;align-items:center;gap:12px;padding:6px 4px 16px}
+  .a-avatar{width:44px;height:44px;border-radius:14px;background:var(--accent-soft);flex:none;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #f0ddd0}
+  .a-avatar svg{width:40px;height:40px}
+  .a-greet .g1{font-size:12px;color:var(--sub)}
+  .a-greet .g2{font-family:var(--serif);font-size:17px;font-weight:700;margin-top:2px}
+  .a-bell{margin-left:auto;width:38px;height:38px;border-radius:12px;background:var(--card);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .a-bell svg{width:18px;height:18px}
+
+  .a-banner{position:relative;border-radius:var(--r-lg);overflow:hidden;
+    background:linear-gradient(135deg,#C67B5C,#A85A3E);padding:20px 18px;
+    box-shadow:0 14px 30px rgba(160,90,60,.26)}
+  .a-banner .slogan{font-family:var(--serif);font-size:20px;font-weight:700;color:#fff8f2;line-height:1.35;max-width:190px}
+  .a-banner .desc{margin-top:8px;font-size:12px;color:rgba(255,247,240,.85);max-width:180px;line-height:1.5}
+  .a-banner .cta{margin-top:16px;display:inline-flex;align-items:center;gap:6px;background:#fff;
+    color:var(--accent-strong);font-size:13px;font-weight:700;padding:9px 18px;border-radius:999px}
+  .a-banner .deco{position:absolute;right:-6px;bottom:-6px;width:96px;height:96px;opacity:.96}
+
+  .a-sec{margin-top:20px}
+  .a-sec-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;padding:0 2px}
+  .a-sec-h .t{font-size:15px;font-weight:700}
+  .a-sec-h .more{font-size:12px;color:var(--accent)}
+
+  .a-chefs{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 4px}
+  .a-chefs::-webkit-scrollbar{display:none}
+  .a-chip{flex:none;width:74px;text-align:center}
+  .a-chip .av{width:60px;height:60px;border-radius:20px;margin:0 auto;display:flex;align-items:center;
+    justify-content:center;font-size:22px;font-weight:700;color:#fff}
+  .a-chip .nm{margin-top:7px;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .a-chip .st{font-size:10px;color:var(--sub);margin-top:1px}
+  .a-chip.add .av{background:var(--card);border:1.5px dashed var(--accent);color:var(--accent);font-weight:400}
+
+  .a-order{background:var(--card);border-radius:var(--r-lg);padding:14px;border:1px solid var(--line);
+    box-shadow:0 8px 20px rgba(124,86,68,.05);margin-bottom:10px}
+  .a-order .row1{display:flex;align-items:center;justify-content:space-between}
+  .a-order .oid{font-size:14px;font-weight:700}
+  .a-order .badge{font-size:11px;padding:3px 10px;border-radius:999px}
+  .badge-pending{background:#fbeede;color:#c26a34}
+  .badge-done{background:#e8f3ea;color:var(--ok)}
+  .a-order .items{margin-top:8px;font-size:13px;color:#5b4237;line-height:1.5}
+  .a-order .meta{margin-top:10px;display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;color:var(--sub);border-top:1px solid var(--line);padding-top:9px}
+  .a-order .thumb{display:flex;gap:6px}
+  .a-order .thumb i{width:34px;height:34px;border-radius:9px;background:var(--accent-soft);display:block}
+
+  .a-quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .a-quick .q{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:14px;display:flex;gap:10px;align-items:center}
+  .a-quick .qi{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);flex:none;
+    display:flex;align-items:center;justify-content:center}
+  .a-quick .qi svg{width:20px;height:20px}
+  .a-quick .qt{font-size:13px;font-weight:600}
+  .a-quick .qs{font-size:11px;color:var(--sub);margin-top:2px}
+
+  /* tabbar */
+  .tabbar{position:absolute;left:0;right:0;bottom:0;height:68px;background:rgba(255,252,248,.96);
+    border-top:1px solid var(--line);display:flex;padding-bottom:6px;backdrop-filter:blur(8px)}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    font-size:10px;color:#a89a92}
+  .tab svg{width:22px;height:22px}
+  .tab.on{color:var(--accent)}
+  .tab.center{margin-top:-18px}
+  .tab.center .fab{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#C67B5C,#A85A3E);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(160,90,60,.4)}
+  .tab.center .fab svg{width:26px;height:26px}
+  .tab.center span{margin-top:4px}
+
+  .notes{max-width:900px;margin:36px auto 0;background:#fffdf9;border:1px solid #ecdccf;
+    border-radius:16px;padding:22px 26px}
+  .notes h2{font-family:var(--serif);font-size:18px;margin-bottom:14px}
+  .notes .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 30px}
+  .notes .it{display:flex;gap:10px}
+  .notes .n{width:22px;height:22px;border-radius:6px;background:var(--accent);color:#fff;font-size:12px;
+    font-weight:700;flex:none;display:flex;align-items:center;justify-content:center}
+  .notes .tx b{font-size:14px}
+  .notes .tx p{font-size:12.5px;color:#6f5d54;line-height:1.6;margin-top:3px}
+  @media(max-width:760px){.notes .grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="page-head">
+    <h1>首页 · 商业版改造样例</h1>
+    <p>左侧是你现在的首页（真实还原），右侧是按可上线标准重做的样例。核心差异：底部 TabBar 导航、单一主行动、真实信息卡替代占位、状态化内容、衬线标题拉质感。此为纯预览，未改动任何小程序代码。</p>
+  </div>
+
+  <div class="stage">
+    <!-- ============ BEFORE ============ -->
+    <div class="col">
+      <div class="col-tag tag-before">现在</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><div class="dots"><span>●●●</span><span class="bar"></span></div></div>
+          <div class="body">
+            <div class="b-hero">
+              <div class="b-eyebrow">首页</div>
+              <div class="b-title">今天想吃什么？</div>
+              <div class="b-copy">用文字付款。和厨师建立专属连接后，每一次点单都会被人认真阅读、好好回应—这是只属于你们的双向照顾。</div>
+              <div class="b-puppy">
+                <svg viewBox="0 0 240 240"><ellipse cx="60" cy="74" rx="29" ry="45" fill="#b8795e" transform="rotate(-16 60 74)"/><ellipse cx="180" cy="74" rx="29" ry="45" fill="#b8795e" transform="rotate(16 180 74)"/><ellipse cx="120" cy="134" rx="84" ry="78" fill="#f4d3bd"/><ellipse cx="92" cy="126" rx="14" ry="16" fill="#3a2a24"/><ellipse cx="148" cy="126" rx="14" ry="16" fill="#3a2a24"/><circle cx="97" cy="120" r="5" fill="#fff"/><circle cx="153" cy="120" r="5" fill="#fff"/><ellipse cx="120" cy="150" rx="13" ry="9" fill="#5a3a31"/></svg>
+                <span>汪，今天的心意，我来替你送到。</span>
+              </div>
+              <div class="b-actions">
+                <button class="b-btn1">邀请顾客绑定</button>
+                <button class="b-btn2">绑定专属厨师</button>
+              </div>
+            </div>
+            <div class="b-start">
+              <div class="t">开始点菜</div>
+              <div class="s">和你的专属厨师，开始一次会被记住的点单</div>
+            </div>
+            <div class="b-recent">
+              <div class="h">最近可点单的厨师</div>
+              <div class="m">多对多绑定，当前已绑定 2 位</div>
+              <div class="b-chef"><div class="av">棕</div><div><div class="nm">厨师阿棕</div><div class="cp">点进来就能继续点单</div></div></div>
+              <div class="b-chef"><div class="av">桃</div><div><div class="nm">厨师小桃</div><div class="cp">点进来就能继续点单</div></div></div>
+            </div>
+            <div class="b-gap">底部大片空白 · 无全局导航</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ AFTER ============ -->
+    <div class="col">
+      <div class="col-tag tag-after">改造后</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><div class="dots"><span>●●●</span><span class="bar"></span></div></div>
+          <div class="body">
+            <div class="a-top">
+              <div class="a-avatar">
+                <svg viewBox="0 0 240 240"><defs><radialGradient id="f1" cx="50%" cy="40%" r="64%"><stop offset="0%" stop-color="#fff7f0"/><stop offset="72%" stop-color="#f8dac5"/><stop offset="100%" stop-color="#eebd9f"/></radialGradient></defs><ellipse cx="60" cy="74" rx="29" ry="45" fill="#b8795e" transform="rotate(-16 60 74)"/><ellipse cx="180" cy="74" rx="29" ry="45" fill="#b8795e" transform="rotate(16 180 74)"/><ellipse cx="120" cy="134" rx="84" ry="78" fill="url(#f1)"/><ellipse cx="92" cy="126" rx="13" ry="16" fill="#3a2a24"/><ellipse cx="148" cy="126" rx="13" ry="16" fill="#3a2a24"/><circle cx="96" cy="120" r="4.5" fill="#fff"/><circle cx="152" cy="120" r="4.5" fill="#fff"/><ellipse cx="120" cy="150" rx="12" ry="9" fill="#5a3a31"/></svg>
+              </div>
+              <div class="a-greet">
+                <div class="g1">下午好，今天也要好好吃饭</div>
+                <div class="g2">小桃的餐桌</div>
+              </div>
+              <div class="a-bell">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#8e6f67" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+              </div>
+            </div>
+
+            <div class="a-banner">
+              <div class="slogan">每一单，都是一次情绪补给</div>
+              <div class="desc">写下想吃的，也写下想说的，厨师会认真读完每一个字。</div>
+              <div class="cta">开始点菜
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0654B" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </div>
+              <svg class="deco" viewBox="0 0 240 240"><defs><radialGradient id="f2" cx="50%" cy="40%" r="64%"><stop offset="0%" stop-color="#fff7f0"/><stop offset="72%" stop-color="#f8dac5"/><stop offset="100%" stop-color="#eebd9f"/></radialGradient></defs><ellipse cx="60" cy="74" rx="29" ry="45" fill="#c98a6f" transform="rotate(-16 60 74)"/><ellipse cx="180" cy="74" rx="29" ry="45" fill="#c98a6f" transform="rotate(16 180 74)"/><ellipse cx="120" cy="134" rx="84" ry="78" fill="url(#f2)"/><ellipse cx="92" cy="126" rx="14" ry="16" fill="#3a2a24"/><ellipse cx="148" cy="126" rx="14" ry="16" fill="#3a2a24"/><circle cx="97" cy="120" r="5" fill="#fff"/><circle cx="153" cy="120" r="5" fill="#fff"/><ellipse cx="120" cy="150" rx="13" ry="9" fill="#5a3a31"/><path d="M112 173 Q120 191 128 173 Q128 185 120 187 Q112 185 112 173 Z" fill="#f48a8a"/></svg>
+            </div>
+
+            <div class="a-sec">
+              <div class="a-sec-h"><div class="t">我的厨师</div><div class="more">全部 ›</div></div>
+              <div class="a-chefs">
+                <div class="a-chip"><div class="av" style="background:linear-gradient(135deg,#C67B5C,#A85A3E)">棕</div><div class="nm">阿棕</div><div class="st">可点单</div></div>
+                <div class="a-chip"><div class="av" style="background:linear-gradient(135deg,#D98E5A,#C06A3A)">桃</div><div class="nm">小桃</div><div class="st">可点单</div></div>
+                <div class="a-chip"><div class="av" style="background:linear-gradient(135deg,#B98A6A,#997052)">妈</div><div class="nm">妈妈</div><div class="st">可点单</div></div>
+                <div class="a-chip add"><div class="av">+</div><div class="nm">绑定</div><div class="st">新厨师</div></div>
+              </div>
+            </div>
+
+            <div class="a-sec">
+              <div class="a-sec-h"><div class="t">最近订单</div><div class="more">查看全部 ›</div></div>
+              <div class="a-order">
+                <div class="row1"><div class="oid">订单 3f9a2c1b</div><div class="badge badge-pending">待制作</div></div>
+                <div class="items">焦糖布丁 x1 · 番茄意面 x1</div>
+                <div class="meta"><div class="thumb"><i></i><i></i></div><span>今天 12:30 · 已通知厨师</span></div>
+              </div>
+              <div class="a-order">
+                <div class="row1"><div class="oid">订单 8b7e4d02</div><div class="badge badge-done">已完成</div></div>
+                <div class="items">奶油蘑菇汤 x1</div>
+                <div class="meta"><div class="thumb"><i></i></div><span>昨天 19:05 · 已回应</span></div>
+              </div>
+            </div>
+
+            <div class="a-sec">
+              <div class="a-quick">
+                <div class="q"><div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="#C67B5C" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><div><div class="qt">邀请顾客</div><div class="qs">生成绑定链接</div></div></div>
+                <div class="q"><div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="#C67B5C" stroke-width="1.8"><path d="M12 3v18M3 12h18"/></svg></div><div><div class="qt">绑定厨师</div><div class="qs">输入 token</div></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tabbar">
+            <div class="tab on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>首页</span></div>
+            <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span>订单</span></div>
+            <div class="tab center"><div class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg></div><span>点菜</span></div>
+            <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg><span>厨师</span></div>
+            <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>我的</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h2>改造后做了哪 6 件事（对应你的真实首页）</h2>
+    <div class="grid">
+      <div class="it"><div class="n">1</div><div class="tx"><b>加底部 TabBar</b><p>首页/订单/点菜/厨师/我的，中间凸起 FAB 直达点单。页面间有稳定导航，不再靠按钮跳来跳去，底部 164rpx 空白也被导航栏正当占用。</p></div></div>
+      <div class="it"><div class="n">2</div><div class="tx"><b>单一主行动</b><p>把"邀请绑定/绑定厨师/开始点菜"三个并列按钮，收敛为一个横幅主 CTA「开始点菜」，次要操作降级为底部快捷入口。</p></div></div>
+      <div class="it"><div class="n">3</div><div class="tx"><b>顶部个性化问候</b><p>头像+「下午好」+身份名，替代生硬的"首页"标签，第一屏就有温度和归属感。</p></div></div>
+      <div class="it"><div class="n">4</div><div class="tx"><b>厨师改横向 chips</b><p>竖排大卡改为可横滑的头像条，一屏能看更多厨师，末尾带「+绑定」入口，信息密度和商业感都更好。</p></div></div>
+      <div class="it"><div class="n">5</div><div class="tx"><b>新增最近订单卡</b><p>首页直接透出订单状态（待制作/已完成）+ 菜品缩略，让用户一进来就知道"我的单到哪了"，这是复购的关键钩子。</p></div></div>
+      <div class="it"><div class="n">6</div><div class="tx"><b>衬线标题 + 统一 Token</b><p>slogan 用思源宋体点出文学感；全站 accent 统一为陶土橘（修掉 orders 页近黑选中态的不一致），圆角/间距用一套变量。</p></div></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BindingStatus {
+  active
+}
+
+enum MenuItemStatus {
+  active
+  inactive
+}
+
+enum OrderStatus {
+  pending
+  completed
+}
+
+enum NotifyStatus {
+  sent
+  fallback
+  failed
+}
+
+enum ReviewerRole {
+  customer
+  chef
+}
+
+enum SubscriptionStatus {
+  accepted
+  revoked
+}
+
+enum JournalStatus {
+  pending
+  generated
+}
+
+enum OutboxStatus {
+  pending
+  processed
+  failed
+}
+
+model User {
+  id            String                     @id @default(cuid())
+  openId        String                     @unique
+  nickname      String?
+  avatarUrl     String?
+  bio           String?
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
+  menus         MenuItem[]
+  customerLinks Binding[]                  @relation("CustomerBindings")
+  chefLinks     Binding[]                  @relation("ChefBindings")
+  shareLinks    BindingShareLink[]
+  customerOrders Order[]                   @relation("CustomerOrders")
+  chefOrders    Order[]                    @relation("ChefOrders")
+  reviews       Review[]
+  files         FileAsset[]
+  subscriptions NotificationSubscription[]
+  journals      JournalSnapshot[]
+}
+
+model Binding {
+  id         String        @id @default(cuid())
+  customerId String
+  chefId     String
+  status     BindingStatus @default(active)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  customer   User          @relation("CustomerBindings", fields: [customerId], references: [id])
+  chef       User          @relation("ChefBindings", fields: [chefId], references: [id])
+
+  @@unique([customerId, chefId])
+}
+
+model BindingShareLink {
+  id        String   @id @default(cuid())
+  chefId     String
+  token      String   @unique
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  chef       User     @relation(fields: [chefId], references: [id])
+}
+
+model MenuItem {
+  id          String         @id @default(cuid())
+  chefId       String
+  imageUrl    String?
+  name        String
+  description String?
+  textPrice   Int
+  status      MenuItemStatus @default(active)
+  sortOrder   Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  chef        User           @relation(fields: [chefId], references: [id])
+  snapshots   OrderItemSnapshot[]
+}
+
+model Order {
+  id                String              @id @default(cuid())
+  customerId        String
+  chefId            String
+  status            OrderStatus         @default(pending)
+  notifyStatus      NotifyStatus        @default(fallback)
+  requiredTextCount Int
+  paymentText       String
+  chefReply         String?
+  completedAt       DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  customer          User                @relation("CustomerOrders", fields: [customerId], references: [id])
+  chef              User                @relation("ChefOrders", fields: [chefId], references: [id])
+  items             OrderItemSnapshot[]
+  reviews           Review[]
+  journalSnapshot   JournalSnapshot?
+}
+
+model OrderItemSnapshot {
+  id          String   @id @default(cuid())
+  orderId      String
+  menuItemId   String?
+  name        String
+  description String?
+  imageUrl    String?
+  textPrice   Int
+  quantity    Int
+  createdAt   DateTime @default(now())
+  order       Order    @relation(fields: [orderId], references: [id])
+  menuItem    MenuItem? @relation(fields: [menuItemId], references: [id])
+}
+
+model Review {
+  id           String       @id @default(cuid())
+  orderId      String
+  reviewerId   String
+  reviewerRole ReviewerRole
+  content      String
+  imageUrl     String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  order        Order        @relation(fields: [orderId], references: [id])
+  reviewer     User         @relation(fields: [reviewerId], references: [id])
+
+  @@unique([orderId, reviewerRole])
+}
+
+model FileAsset {
+  id         String   @id @default(cuid())
+  ownerId     String
+  storageKey  String
+  url        String
+  mimeType   String
+  size       Int
+  createdAt  DateTime @default(now())
+  owner      User     @relation(fields: [ownerId], references: [id])
+}
+
+model NotificationSubscription {
+  id         String             @id @default(cuid())
+  userId      String
+  templateId  String
+  status     SubscriptionStatus @default(accepted)
+  acceptedAt DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  user       User               @relation(fields: [userId], references: [id])
+
+  @@unique([userId, templateId])
+}
+
+model JournalSnapshot {
+  id             String        @id @default(cuid())
+  orderId         String        @unique
+  customerId      String
+  structuredData  Json
+  status          JournalStatus @default(pending)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  order           Order         @relation(fields: [orderId], references: [id])
+  customer        User          @relation(fields: [customerId], references: [id])
+}
+
+model OutboxEvent {
+  id          String       @id @default(cuid())
+  topic       String
+  payload     Json
+  status      OutboxStatus @default(pending)
+  createdAt   DateTime     @default(now())
+  processedAt DateTime?
+}

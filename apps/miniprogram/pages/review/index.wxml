@@ -1,0 +1,10 @@
+<view class="container review-page">
+  <view class="card review-card">
+    <view class="eyebrow">带图评价</view>
+    <view class="section-title">给这顿饭留个脚印</view>
+    <textarea class="textarea" placeholder="写下这次文字点单的感受" value="{{content}}" bindinput="onContentInput"></textarea>
+    <button class="secondary-btn" bindtap="chooseImage">上传评价图片</button>
+    <image wx:if="{{imageUrl}}" class="preview-image" src="{{imageUrl}}" mode="aspectFill" />
+    <button class="primary-btn" bindtap="submit">提交评价</button>
+  </view>
+</view>

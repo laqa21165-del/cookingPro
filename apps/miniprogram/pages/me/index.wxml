@@ -1,0 +1,69 @@
+<view class="container me-page" wx:if="{{me}}">
+  <view class="card user-header">
+    <view class="user-top">
+      <view class="user-avatar">{{avatarText}}</view>
+      <view class="user-meta">
+        <view class="user-name">{{me.nickname}}</view>
+        <view class="user-role">{{roleLabel}}</view>
+      </view>
+    </view>
+    <view class="user-stats">
+      <view class="user-stat">
+        <text class="user-stat-num">{{customerBindings.length}}</text>
+        <text class="user-stat-label">绑定厨师</text>
+      </view>
+      <view class="user-stat">
+        <text class="user-stat-num">{{chefBindings.length}}</text>
+        <text class="user-stat-label">我的顾客</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card profile-card">
+    <view class="eyebrow">个人设置</view>
+    <view class="section-title">当前原型支持演示身份切换</view>
+    <view class="muted">你可以在这里切换成点单者或厨师身份，继续走完整闭环。</view>
+    <view class="puppy-card">
+      <image class="puppy-img" src="/images/puppy.svg" mode="aspectFit" />
+      <view class="puppy-note">汪，我也会帮你看好绑定关系。</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">演示身份</view>
+    <view class="identity-list">
+      <button wx:for="{{demoOptions}}" wx:key="openId" class="{{item.buttonClass}}" data-id="{{item.openId}}" bindtap="switchIdentity">{{item.label}}</button>
+    </view>
+    <view class="muted current-role">当前身份：{{me.nickname}}</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">绑定关系</view>
+
+    <view wx:if="{{hasCustomerBindings}}" class="binding-group">
+      <view class="binding-group-title">我绑定的厨师</view>
+      <view wx:for="{{customerBindings}}" wx:key="chefId" class="binding-row">
+        <view>
+          <view class="binding-name">{{item.displayName}}</view>
+          <view class="muted">顾客视角下的绑定关系</view>
+        </view>
+        <button class="secondary-btn tiny-btn" data-id="{{item.relatedUserId}}" bindtap="removeBinding">删除绑定</button>
+      </view>
+    </view>
+
+    <view wx:if="{{hasChefBindings}}" class="binding-group">
+      <view class="binding-group-title">绑定我的顾客</view>
+      <view wx:for="{{chefBindings}}" wx:key="customerId" class="binding-row">
+        <view>
+          <view class="binding-name">{{item.displayName}}</view>
+          <view class="muted">厨师视角下的绑定关系</view>
+        </view>
+        <button class="secondary-btn tiny-btn" data-id="{{item.relatedUserId}}" bindtap="removeBinding">删除绑定</button>
+      </view>
+    </view>
+
+    <view wx:if="{{!hasAnyBindings}}" class="muted">当前还没有绑定关系，可以回首页继续绑定。</view>
+    <button class="primary-btn full-btn" bindtap="subscribeChefMessage">记录厨师提醒订阅</button>
+    <button class="secondary-btn full-btn secondary-gap" bindtap="goHome">回首页继续绑定</button>
+  </view>
+</view>

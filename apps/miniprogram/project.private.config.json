@@ -1,0 +1,42 @@
+{
+  "libVersion": "3.16.2",
+  "projectname": "miniprogram",
+  "setting": {
+    "urlCheck": false,
+    "coverView": true,
+    "lazyloadPlaceholderEnable": false,
+    "skylineRenderEnable": false,
+    "preloadBackgroundData": false,
+    "autoAudits": false,
+    "useApiHook": true,
+    "showShadowRootInWxmlPanel": true,
+    "useStaticServer": false,
+    "useLanDebug": false,
+    "showES6CompileOption": false,
+    "compileHotReLoad": true,
+    "checkInvalidKey": true,
+    "ignoreDevUnusedFiles": true,
+    "bigPackageSizeSupport": false,
+    "useIsolateContext": true
+  },
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/home/index",
+          "pathName": "pages/home/index",
+          "query": "mockUser=userB",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
+          "name": "pages/home/index",
+          "pathName": "pages/home/index",
+          "query": "mockUser=userA",
+          "launchMode": "default",
+          "scene": null
+        }
+      ]
+    }
+  }
+}

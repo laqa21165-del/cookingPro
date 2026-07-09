@@ -1,0 +1,15 @@
+node_modules/
+dist/
+apps/api/dist/
+apps/api/node_modules/
+apps/miniprogram/node_modules/
+packages/shared-types/dist/
+apps/api/prisma/dev.db
+apps/api/uploads/
+.env
+.env.*
+!.env.example
+
+# Agent / IDE internal state (not project source)
+.workbuddy/
+.agents/
