@@ -1,1 +1,6 @@
-{"navigationBarTitleText":"绑定确认"}
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "home-tabbar": "/custom-tab-bar/index"
+  }
+}

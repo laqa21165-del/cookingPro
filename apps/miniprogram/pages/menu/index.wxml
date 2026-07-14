@@ -1,28 +1,44 @@
-<view class="container menu-page">
-  <button class="primary-btn full-btn" bindtap="goCreate">添加菜品</button>
+<view class="screen-page">
+  
+  <view class="screen-stage with-tabbar">
+    <image class="screen-doodle star" src="/images/doodles/star.svg" mode="aspectFit" />
+    <image class="screen-doodle heart" src="/images/doodles/heart.svg" mode="aspectFit" />
+    <image class="screen-doodle wave" src="/images/doodles/squiggle.svg" mode="aspectFit" />
+    <image class="screen-doodle flower" src="/images/doodles/flower.svg" mode="aspectFit" />
 
-  <view wx:if="{{hasItems}}" class="menu-list">
-    <view wx:for="{{items}}" wx:key="id" class="card menu-row">
-      <view class="menu-image">
-        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" />
+    <view class="screen-header">
+      <view class="screen-title">菜单</view>
+      <view class="screen-mark">☆</view>
+    </view>
+
+    <button class="menu-create-btn" bindtap="goCreate">+ 添加菜品</button>
+
+    <block wx:if="{{hasItems}}">
+      <view wx:for="{{items}}" wx:key="id" class="screen-card menu-row">
+      <view class="menu-left">
+        <view class="menu-image">
+          <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" />
+        </view>
+        <view class="menu-price">{{item.textPriceText}}</view>
       </view>
-      <view class="menu-content">
-        <view class="menu-head">
+        <view class="menu-content">
           <view class="menu-name">{{item.name}}</view>
           <view class="{{item.statusTagClass}}">{{item.statusText}}</view>
-        </view>
-        <view class="muted">{{item.description}}</view>
-        <view class="muted">{{item.textPriceText}}</view>
-        <view class="row-actions">
-          <button class="secondary-btn tiny-btn" data-id="{{item.id}}" data-status="{{item.status}}" bindtap="toggleStatus">{{item.toggleActionText}}</button>
-          <button class="secondary-btn tiny-btn" data-id="{{item.id}}" bindtap="removeItem">删除</button>
+          <view class="menu-desc">{{item.description}}</view>
+          <view class="row-actions">
+            <button class="menu-action" data-id="{{item.id}}" bindtap="editItem">编辑</button>
+            <button class="menu-action" data-id="{{item.id}}" data-status="{{item.status}}" bindtap="toggleStatus">{{item.toggleActionText}}</button>
+            <button class="menu-action menu-action-danger" data-id="{{item.id}}" bindtap="removeItem">删除</button>
+          </view>
+        
         </view>
       </view>
-    </view>
-  </view>
+    </block>
 
-  <view wx:else class="card">
-    <view class="section-title">还没有菜品</view>
-    <view class="muted">先添加一道菜，后续就可以在点单页被搜索和加入购物车。</view>
+    <view wx:else class="screen-card empty-state">
+      <image class="empty-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
+      <view class="empty-title">还没有菜品</view>
+      <view class="muted">先添加一道菜，后续就可以在点单页被搜索和加入购物车。</view>
+    </view>
   </view>
 </view>

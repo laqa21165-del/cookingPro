@@ -1,44 +1,58 @@
-<view class="container detail-page" wx:if="{{order}}">
-  <view class="card">
-    <view class="section-title">订单状态</view>
-    <view class="detail-strong">{{order.statusText}}</view>
-    <view class="muted">通知状态：{{order.notifyStatusText}}</view>
-  </view>
+<view class="screen-page" wx:if="{{order}}">
+  <view class="screen-stage">
+    <image class="screen-doodle star" src="/images/doodles/star.svg" mode="aspectFit" />
+    <image class="screen-doodle heart" src="/images/doodles/heart.svg" mode="aspectFit" />
+    <image class="screen-doodle wave" src="/images/doodles/squiggle.svg" mode="aspectFit" />
 
-  <view class="card">
-    <view class="section-title">菜品快照</view>
-    <view wx:for="{{order.items}}" wx:key="id" class="snapshot-row">
-      <view>{{item.name}} x {{item.quantity}}</view>
-      <view class="muted">{{item.textPrice}} 字 / 份</view>
+    <view class="screen-header">
+      <view class="screen-title">订单详情</view>
+      <view class="screen-mark">☆</view>
     </view>
-  </view>
 
-  <view class="card">
-    <view class="section-title">支付文字</view>
-    <view class="detail-text">{{order.paymentText}}</view>
-  </view>
-
-  <view class="card" wx:if="{{order.showCompleteCard}}">
-    <view class="section-title">完成订单</view>
-    <textarea class="textarea" placeholder="可选填写给顾客的回复" value="{{chefReply}}" bindinput="onChefReplyInput"></textarea>
-    <button class="primary-btn" bindtap="handleComplete">完成订单</button>
-  </view>
-
-  <view class="card" wx:if="{{order.chefReply}}">
-    <view class="section-title">厨师回复</view>
-    <view class="detail-text">{{order.chefReply}}</view>
-  </view>
-
-  <view class="card">
-    <view class="section-title">双方评价</view>
-    <view wx:if="{{order.hasReviews}}">
-      <view wx:for="{{order.reviews}}" wx:key="id" class="review-item">
-        <view class="review-role">{{item.reviewerRoleText}}</view>
-        <view class="detail-text">{{item.content}}</view>
-        <image wx:if="{{item.imageUrl}}" class="review-image" src="{{item.imageUrl}}" mode="aspectFill" />
+    <view class="screen-card compact">
+      <view class="section-title">订单状态</view>
+      <view class="screen-status-row">
+        <view class="screen-status-main {{order.status === 'completed' ? 'success' : ''}}">{{order.statusText}}</view>
+        <view class="muted">通知状态：{{order.notifyStatusText}}</view>
       </view>
     </view>
-    <view wx:else class="muted">还没有评价。</view>
-    <button wx:if="{{order.canReview}}" class="secondary-btn" bindtap="goReview">去评价</button>
+
+    <view class="screen-card compact">
+      <view class="section-title">菜品快照</view>
+      <view wx:for="{{order.items}}" wx:key="id" class="snapshot-row">
+        <view>{{item.name}} x{{item.quantity}}</view>
+        <view class="snapshot-price">{{item.textPrice}} 字 / 份</view>
+      </view>
+    </view>
+
+    <view class="screen-card compact">
+      <view class="section-title">支付文字</view>
+      <view class="detail-text">{{order.paymentText}}</view>
+    </view>
+
+    <view class="screen-card compact" wx:if="{{order.showCompleteCard}}">
+      <view class="section-title">完成订单</view>
+      <textarea class="input detail-reply" placeholder="可选填写给顾客的回复" value="{{chefReply}}" bindinput="onChefReplyInput"></textarea>
+      <button class="detail-primary-btn" bindtap="handleComplete">完成订单</button>
+    </view>
+
+    <view class="screen-card compact" wx:if="{{order.chefReply}}">
+      <view class="section-title">厨师回复</view>
+      <view class="detail-text">{{order.chefReply}}</view>
+    </view>
+
+    <view class="screen-card compact">
+      <view class="section-title">双方评价</view>
+      <view wx:if="{{order.hasReviews}}">
+        <view wx:for="{{order.reviews}}" wx:key="id" class="review-item">
+          <view class="soft-pill primary">{{item.reviewerRoleText}}</view>
+          <view class="detail-text">{{item.content}}</view>
+          <image wx:if="{{item.imageUrl}}" class="review-image" src="{{item.imageUrl}}" mode="aspectFill" />
+        </view>
+      </view>
+      <view wx:else class="review-empty">还没有评价</view>
+      <button wx:if="{{order.canReview}}" class="detail-secondary-btn" bindtap="goReview">去评价</button>
+    </view>
   </view>
+  <home-tabbar></home-tabbar>
 </view>

@@ -19,7 +19,7 @@
     "coverView": true,
     "showShadowRootInWxmlPanel": true,
     "useIsolateContext": true,
-    "nodeModules": true,
+    "nodeModules": false,
     "scopeDataCheck": false,
     "uglifyFileName": false,
     "checkInvalidKey": true,

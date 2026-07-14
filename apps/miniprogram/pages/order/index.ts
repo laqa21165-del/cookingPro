@@ -38,7 +38,7 @@ function recalc(page) {
         quantityText: String(quantity),
         subtractDisabled: quantity <= 0,
         addDisabled: isInactive,
-        tagText: isInactive ? '已下架' : '可下单',
+        tagText: isInactive ? '已下架' : '可点',
       };
     });
 
@@ -191,9 +191,6 @@ Page({
     this.setData({ paymentText: event.detail.value });
     recalc(this);
   },
-  goHome() {
-    wx.switchTab({ url: '/pages/home/index' });
-  },
   async submitOrder() {
     if (this.data.submitDisabled) {
       wx.showToast({ title: '文字数量还不够', icon: 'none' });
@@ -212,9 +209,7 @@ Page({
 
       wx.showModal({
         title: '下单成功',
-        content: order.notifyStatus === 'sent'
-          ? '文字已送达，已通过微信订阅消息通知厨师。'
-          : '文字已送达，厨师暂未开启微信提醒，已改为站内提醒。',
+        content: order.notifyStatus === 'sent' ? '文字已经送达，系统也通知了厨师。' : '文字已经送达，厨师暂未开启提醒，已改为站内提示。',
         showCancel: false,
         success: () => {
           wx.redirectTo({ url: `/pages/order-detail/index?id=${order.id}` });

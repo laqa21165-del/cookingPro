@@ -1,36 +1,72 @@
-.detail-page {
-  display: flex;
-  flex-direction: column;
-  gap: 18rpx;
+.snapshot-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12rpx;
+  align-items: center;
+  font-size: 30rpx;
+  color: #3B251F;
 }
 
-.detail-strong,
-.review-role {
-  font-size: 28rpx;
+.snapshot-row + .snapshot-row {
+  margin-top: 18rpx;
+}
+
+.snapshot-price {
+  color: var(--primary);
+  font-size: 30rpx;
   font-weight: 700;
 }
 
-.snapshot-row,
-.review-item {
-  display: grid;
-  gap: 12rpx;
-  padding: 12rpx 0;
-}
-
-.snapshot-row {
-  grid-template-columns: 1fr auto;
-  align-items: center;
-}
-
 .detail-text {
-  line-height: 1.8;
+  color: var(--ink);
+  font-size: 28rpx;
+  line-height: 1.6;
   white-space: pre-wrap;
-  word-break: break-word;
+}
+
+.detail-reply {
+  min-height: 84rpx;
+  margin-bottom: 18rpx;
+}
+
+.detail-primary-btn,
+.detail-secondary-btn {
+  min-height: 72rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.detail-primary-btn {
+  width: 320rpx;
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.detail-secondary-btn {
+  width: 200rpx;
+  margin-top: 20rpx;
+  margin-left: auto;
+  background: #f3e0d5;
+  color: #b8684a;
+}
+
+.review-item + .review-item {
+  margin-top: 20rpx;
 }
 
 .review-image {
   width: 100%;
   height: 240rpx;
-  border-radius: 20rpx;
-  background: #f4e6db;
+  margin-top: 12rpx;
+  border-radius: 24rpx;
+}
+
+.review-empty {
+  color: var(--muted);
+  font-size: 24rpx;
 }

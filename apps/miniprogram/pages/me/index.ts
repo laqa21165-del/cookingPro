@@ -4,9 +4,9 @@ import { deleteBinding } from '../../services/binding';
 import { subscribeNotification } from '../../services/notification';
 
 const demoOptions = [
-  { openId: DEMO_USERS.customer_demo.openId, label: '点单者' },
-  { openId: DEMO_USERS.chef_demo_a.openId, label: '厨师阿棕' },
-  { openId: DEMO_USERS.chef_demo_b.openId, label: '厨师小桃' },
+  { openId: DEMO_USERS.customer_demo.openId, label: '小满（顾客）' },
+  { openId: DEMO_USERS.chef_demo_a.openId, label: '林师傅（厨师）' },
+  { openId: DEMO_USERS.chef_demo_b.openId, label: '陈师傅（厨师）' },
 ];
 
 function formatDemoOptions(currentDemoOpenId) {
@@ -37,7 +37,7 @@ Page({
     me: null,
     demoOptions: formatDemoOptions('customer_demo'),
     currentDemoOpenId: 'customer_demo',
-    roleLabel: '点单者',
+    roleLabel: '点单者・顾客',
     avatarText: '我',
     customerBindings: [],
     chefBindings: [],
@@ -46,6 +46,10 @@ Page({
     hasAnyBindings: false,
   },
   async onShow() {
+    const tabBar = typeof this.getTabBar === 'function' ? this.getTabBar() : null;
+    if (tabBar) {
+      tabBar.setData({ selected: 3 });
+    }
     await this.loadMe();
   },
   async loadMe() {
@@ -54,7 +58,7 @@ Page({
       const currentDemoOpenId = getSelectedDemoOpenId();
       const customerBindings = formatCustomerBindings(me.bindings?.asCustomer || []);
       const chefBindings = formatChefBindings(me.bindings?.asChef || []);
-      const roleLabel = (demoOptions.find((d) => d.openId === currentDemoOpenId) || {}).label || '点单者';
+      const roleLabel = currentDemoOpenId === DEMO_USERS.customer_demo.openId ? '点单者・顾客' : '厨师演示身份';
       const avatarText = (me.nickname || '我').slice(0, 1);
       this.setData({
         me,

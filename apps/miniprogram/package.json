@@ -5,9 +5,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "tdesign-miniprogram": "^1.9.4"
-  },
+
   "devDependencies": {
     "miniprogram-api-typings": "^4.0.7",
     "typescript": "^5.9.2"

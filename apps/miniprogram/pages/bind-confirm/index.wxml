@@ -1,15 +1,29 @@
-<view class="container">
-  <view class="card bind-card">
-    <view class="eyebrow">绑定确认</view>
-    <view class="section-title">确认绑定这位厨师</view>
-    <view class="puppy-card">
-      <image class="puppy-img" src="/images/puppy.svg" mode="aspectFit" />
-      <view class="puppy-note">汪，确认之后，你们就会建立新的绑定关系。</view>
+<view class="screen-page">
+  
+  <view class="screen-stage">
+    <image class="screen-doodle star" src="/images/doodles/star.svg" mode="aspectFit" />
+    <image class="screen-doodle heart" src="/images/doodles/heart.svg" mode="aspectFit" />
+    <image class="screen-doodle flower" src="/images/doodles/flower.svg" mode="aspectFit" />
+    <image class="screen-doodle wave" src="/images/doodles/squiggle.svg" mode="aspectFit" />
+
+    <view class="screen-header">
+      <view class="screen-title">绑定确认</view>
+      <view class="screen-mark">☆</view>
     </view>
-    <view class="muted">{{readonly ? '当前分享 token' : '输入厨师发来的 token'}}</view>
-    <view wx:if="{{readonly}}" class="token-box">{{token}}</view>
-    <input wx:else class="input token-input" placeholder="粘贴或输入厨师发来的 token" value="{{token}}" bindinput="onTokenInput" />
-    <button class="primary-btn full-btn" bindtap="confirm">确认绑定</button>
-    <view wx:if="{{result}}" class="result-text">{{result.message}}</view>
+
+    <view class="screen-card bind-card">
+      <view class="eyebrow">绑定确认</view>
+      <view class="section-title">确认绑定这位厨师</view>
+      <view class="tip-card">
+        <image class="tip-icon" src="/images/puppy.png" mode="aspectFit" />
+        <view class="tip-text">汪，确认之后，你们就会建立新的绑定关系。</view>
+      </view>
+      <view class="muted">{{readonly ? '当前分享 token' : '输入厨师发来的 token'}}</view>
+      <view wx:if="{{readonly}}" class="token-box">{{token}}</view>
+      <input wx:else class="input token-input" placeholder="粘贴或输入厨师发来的 token" value="{{token}}" bindinput="onTokenInput" />
+      <button class="save-btn" bindtap="confirm">确认绑定</button>
+      <view wx:if="{{result}}" class="bind-success">{{result.message || '绑定成功！现在可以去点单啦'}}</view>
+    </view>
   </view>
+  <home-tabbar></home-tabbar>
 </view>

@@ -15,3 +15,7 @@ export function updateMenuStatus(id: string, status: 'active' | 'inactive') {
 export function deleteMenuItem(id: string) {
   return request({ url: `/menus/${id}`, method: 'DELETE' });
 }
+
+export function updateMenuItem(id: string, data: Record<string, unknown>) {
+  return request({ url: `/menus/${id}`, method: 'PATCH', data });
+}

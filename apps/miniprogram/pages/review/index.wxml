@@ -1,10 +1,25 @@
-<view class="container review-page">
-  <view class="card review-card">
-    <view class="eyebrow">带图评价</view>
-    <view class="section-title">给这顿饭留个脚印</view>
-    <textarea class="textarea" placeholder="写下这次文字点单的感受" value="{{content}}" bindinput="onContentInput"></textarea>
-    <button class="secondary-btn" bindtap="chooseImage">上传评价图片</button>
-    <image wx:if="{{imageUrl}}" class="preview-image" src="{{imageUrl}}" mode="aspectFill" />
-    <button class="primary-btn" bindtap="submit">提交评价</button>
+<view class="screen-page">
+  
+  <view class="screen-stage">
+    <image class="screen-doodle star" src="/images/doodles/star.svg" mode="aspectFit" />
+    <image class="screen-doodle heart" src="/images/doodles/heart.svg" mode="aspectFit" />
+    <image class="screen-doodle flower" src="/images/doodles/flower.svg" mode="aspectFit" />
+    <image class="screen-doodle wave" src="/images/doodles/squiggle.svg" mode="aspectFit" />
+
+    <view class="screen-header">
+      <view class="screen-title">评价</view>
+      <view class="screen-mark">☆</view>
+    </view>
+
+    <view class="screen-card review-card">
+      <view class="eyebrow">带图评价</view>
+      <view class="section-title">给这顿饭留个脚印</view>
+      <textarea class="textarea review-textarea" placeholder="写下这次文字点单的感受" value="{{content}}" bindinput="onContentInput"></textarea>
+      <button class="upload-btn" bindtap="chooseImage">上传评价图片</button>
+      <image wx:if="{{imageUrl}}" class="preview-image" src="{{imageUrl}}" mode="aspectFill" />
+      <view wx:else class="image-placeholder"></view>
+      <button class="save-btn" bindtap="submit">提交评价</button>
+    </view>
   </view>
+  <home-tabbar></home-tabbar>
 </view>

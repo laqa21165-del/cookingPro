@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMenus = getMenus;
 exports.createMenuItem = createMenuItem;
 exports.updateMenuStatus = updateMenuStatus;
+exports.updateMenuItem = updateMenuItem;
 exports.deleteMenuItem = deleteMenuItem;
 const request_1 = require("../utils/request");
 function getMenus(chefId) {
@@ -13,6 +14,9 @@ function createMenuItem(data) {
 }
 function updateMenuStatus(id, status) {
     return (0, request_1.request)({ url: `/menus/${id}/status`, method: 'PATCH', data: { status } });
+}
+function updateMenuItem(id, data) {
+    return (0, request_1.request)({ url: '/menus/' + id, method: 'PATCH', data });
 }
 function deleteMenuItem(id) {
     return (0, request_1.request)({ url: `/menus/${id}`, method: 'DELETE' });

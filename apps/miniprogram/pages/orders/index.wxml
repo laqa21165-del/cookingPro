@@ -1,32 +1,48 @@
-<view class="container orders-page">
-  <view class="card orders-filter-card">
-    <view class="section-title">查看订单</view>
-    <view class="muted">下单菜品、支付文字、回复和评价都会沉淀在这里。</view>
-    <view class="mode-tabs">
-      <button class="{{customerTabClass}}" data-role="customer" bindtap="switchRole">我下的订单</button>
-      <button class="{{chefTabClass}}" data-role="chef" bindtap="switchRole">我收到的订单</button>
-    </view>
-  </view>
+<view class="screen-page">
+  
+  <view class="screen-stage with-tabbar">
+    <image class="screen-doodle star" src="/images/doodles/star.svg" mode="aspectFit" />
+    <image class="screen-doodle spark" src="/images/doodles/spark.svg" mode="aspectFit" />
+    <image class="screen-doodle heart" src="/images/doodles/heart.svg" mode="aspectFit" />
+    <image class="screen-doodle flower" src="/images/doodles/flower.svg" mode="aspectFit" />
+    <image class="screen-doodle wave" src="/images/doodles/squiggle.svg" mode="aspectFit" />
 
-  <view wx:if="{{hasOrders}}" class="orders-list">
-    <view wx:for="{{orders}}" wx:key="id" class="card order-card" data-id="{{item.id}}" bindtap="goDetail">
-      <view class="order-head">
-        <view class="order-title">订单 {{item.shortId}}</view>
-        <view class="order-state-group">
-          <view wx:if="{{item.showNewBadge}}" class="new-badge">新订单</view>
-          <view class="{{item.statusClass}}">{{item.statusText}}</view>
+    <view class="screen-header">
+      <view class="screen-title">订单</view>
+      <view class="screen-mark">☆</view>
+    </view>
+
+    <view class="screen-card compact orders-filter-card">
+      <view class="section-title">查看订单</view>
+      <view class="muted">下单菜品、支付文字、回复和评价都会沉淀在这里。</view>
+      <view class="mode-tabs">
+        <button class="{{chefTabClass}}" data-role="chef" bindtap="switchRole">我收到的订单</button>
+        <button class="{{customerTabClass}}" data-role="customer" bindtap="switchRole">我下的订单</button>
+      </view>
+    </view>
+
+    <block wx:if="{{hasOrders}}">
+      <view wx:for="{{orders}}" wx:key="id" class="screen-card order-card" data-id="{{item.id}}" bindtap="goDetail">
+        <view class="order-head">
+          <view class="order-title">订单 A{{item.shortId}}</view>
+          <view class="order-state-group">
+            <view wx:if="{{item.showNewBadge}}" class="new-badge">新订单</view>
+            <view class="{{item.statusClass}}">{{item.statusText}}</view>
+          </view>
+        </view>
+        <view class="order-line">{{item.itemsText}}</view>
+        <view class="order-meta">
+          <view class="muted order-time">{{item.createdAtText}}</view>
+          <view class="muted order-notify">{{item.notifyStatusText}}</view>
         </view>
       </view>
-      <view class="order-line">{{item.itemsText}}</view>
-      <view class="order-meta">
-        <view class="muted order-time">{{item.createdAt}}</view>
-        <view class="muted order-notify">{{item.notifyStatusText}}</view>
-      </view>
+    </block>
+
+    <view wx:else class="screen-card empty-order-card empty-state">
+      <image class="empty-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
+      <view class="empty-title">{{emptyTitle}}</view>
+      <view class="muted">{{emptyCopy}}</view>
+      <button class="secondary-btn full-btn" bindtap="goOrder">去点菜</button>
     </view>
-  </view>
-  <view wx:else class="card empty-order-card">
-    <view class="empty-title">{{emptyTitle}}</view>
-    <view class="muted">{{emptyCopy}}</view>
-    <button class="secondary-btn full-btn" bindtap="goOrder">去点菜</button>
   </view>
 </view>

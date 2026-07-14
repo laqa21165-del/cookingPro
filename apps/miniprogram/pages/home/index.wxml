@@ -1,61 +1,84 @@
-<view class="container home-page">
-  <view class="hero-card">
-    <view>
-      <view class="eyebrow">首页</view>
-      <view class="hero-title">今天想吃什么？</view>
-      <view class="hero-copy">用文字付款。和厨师建立专属连接后，每一次点单都会被人认真阅读、好好回应—这是只属于你们的双向照顾。</view>
-    </view>
-    <view class="puppy-card">
-      <image class="puppy-img" src="/images/puppy.svg" mode="aspectFit" />
-      <view class="puppy-note">汪，今天的心意，我来替你送到。</view>
-    </view>
-    <view class="hero-actions">
-      <button class="primary-btn hero-btn" bindtap="prepareShare">邀请顾客绑定</button>
-      <button class="secondary-btn hero-btn" bindtap="goBindChef">绑定专属厨师</button>
-    </view>
-  </view>
+<view class="home-page">
+  <view class="home-stage">
+    <view class="home-safe-top" style="height: {{topInset}}px;"></view>
 
-  <view wx:if="{{bindingConfirmed}}" class="notice-card">
-    <view class="notice-title">绑定确认成功</view>
-    <view class="notice-text">你已经和这位厨师建立关系，现在可以直接去点单了。</view>
-  </view>
+    <image class="doodle doodle-spark" src="/images/doodles/spark.svg" mode="aspectFit" />
+    <image class="doodle doodle-star" src="/images/doodles/star.svg" mode="aspectFit" />
+    <image class="doodle doodle-heart" src="/images/doodles/heart.svg" mode="aspectFit" />
+    <image class="doodle doodle-flower" src="/images/doodles/flower.svg" mode="aspectFit" />
+    <image class="doodle doodle-wave" src="/images/doodles/squiggle.svg" mode="aspectFit" />
 
-  <view wx:if="{{shareLink}}" class="card share-card">
-    <view class="eyebrow">模拟微信分享</view>
-    <view class="section-title share-title">把绑定链接发给顾客</view>
-    <view class="share-preview">
-      <view class="share-preview-title">分享后，对方会直接进入绑定确认页</view>
-      <view class="share-preview-copy">如果对方暂时不方便点开，也可以先复制这段短 token 给他。</view>
+    <view class="home-header">
+      <view class="home-header-copy">
+        <view class="home-header-line">{{greetingTitle}}</view>
+        <view class="home-header-line">{{greetingSubline}} ~</view>
+      </view>
+      <image class="home-face" src="/images/smile-outline.svg" mode="aspectFit" />
     </view>
-    <view class="token-box">{{shareLink.token}}</view>
-    <view class="share-actions">
-      <button class="secondary-btn share-action-btn" bindtap="copyShareToken">复制 token</button>
-      <button class="primary-btn share-action-btn" open-type="share">分享给微信好友</button>
-    </view>
-  </view>
 
-  <view class="start-order-card" bindtap="directEnter">
-    <view class="start-order-title">开始点菜</view>
-    <view class="start-order-sub">和你的专属厨师，开始一次会被记住的点单</view>
-  </view>
-
-  <view class="card recent-card">
-    <view>
-      <view class="section-title no-gap">最近可点单的厨师</view>
-      <view class="muted">多对多绑定，当前已绑定 {{customerBindings.length}} 位</view>
+    <view class="hero-card">
+      <view class="hero-main">
+        <view class="hero-title">今天想吃什么？</view>
+        <view class="hero-desc">用文字付款，每一次点单都被认真阅读、好好回应。</view>
+        <view class="hero-note">汪，今天的心意，我来替你送到。</view>
+      </view>
+      <view class="hero-art">
+        <image class="hero-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
+      </view>
     </view>
-    <view wx:if="{{hasBindings}}" class="chef-grid">
-      <button wx:for="{{customerBindings}}" wx:key="chefId" class="chef-card" data-id="{{item.chefId}}" bindtap="chooseChef">
-        <view class="chef-avatar">{{item.avatarText}}</view>
-        <view class="chef-meta">
+
+    <view class="start-btn" bindtap="directEnter">
+      <text>开始点菜</text>
+      <text class="start-arrow">→</text>
+    </view>
+
+    <view class="chip-row">
+      <view class="chip chip-invite" bindtap="prepareShare">
+        <image class="chip-icon" src="/images/icons/plane.svg" mode="aspectFit" />
+        <text>邀请顾客绑定</text>
+      </view>
+      <view class="chip chip-bind" bindtap="goBindChef">
+        <image class="chip-icon" src="/images/icons/person-add.svg" mode="aspectFit" />
+        <text>绑定专属厨师</text>
+      </view>
+    </view>
+
+    <view wx:if="{{bindingConfirmed}}" class="inline-notice success-notice">
+      <view class="inline-notice-title">绑定确认成功</view>
+      <view class="inline-notice-text">你已经和这位厨师建立关系，现在可以继续点单了。</view>
+    </view>
+
+    <view wx:if="{{shareLink}}" class="inline-notice share-notice">
+      <view class="inline-notice-title">邀请码 {{shareLink.token}}</view>
+      <view class="inline-notice-text">复制口令或直接分享给对方，对方确认后就能完成绑定。</view>
+      <view class="share-actions">
+        <button class="notice-btn light-btn" bindtap="copyShareToken">复制口令</button>
+        <button class="notice-btn solid-btn" open-type="share">立即分享</button>
+      </view>
+    </view>
+
+    <view class="recent-section">
+      <view class="recent-title">最近可点单的厨师</view>
+      <view class="recent-subtitle">当前已绑定 {{customerBindings.length}} 位 </view>
+
+      <view wx:if="{{hasBindings}}" class="chef-grid">
+        <button
+          wx:for="{{customerBindings}}"
+          wx:key="chefId"
+          class="chef-card"
+          data-id="{{item.chefId}}"
+          bindtap="chooseChef"
+        >
+          <view class="chef-avatar">{{item.avatarText}}</view>
           <view class="chef-name">{{item.displayName}}</view>
           <view class="chef-copy">点进来就能继续点单</view>
-        </view>
-      </button>
-    </view>
-    <view wx:else class="empty-card">
-      <view class="empty-title">还没有绑定的厨师</view>
-      <view class="muted">先和一位厨师建立绑定关系，再开始点单。</view>
+        </button>
+      </view>
+
+      <view wx:else class="empty-card">
+        <view class="empty-title">还没有绑定的厨师</view>
+        <view class="empty-copy">先通过邀请或口令完成绑定，再回来开始点单。</view>
+      </view>
     </view>
   </view>
 </view>

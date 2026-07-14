@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { ensureLogin, refreshMe } from '../../utils/auth';
 import { createBindingShare, getBindings } from '../../services/binding';
 
@@ -10,6 +10,32 @@ function formatBindings(bindings = []) {
   }));
 }
 
+function getGreetingContent() {
+  const hour = new Date().getHours();
+  if (hour < 6) {
+    return {
+      title: '夜深了，把心意交给文字',
+      subline: '今天也辛苦啦，慢慢挑',
+    };
+  }
+  if (hour < 12) {
+    return {
+      title: '早上好，把心意交给文字',
+      subline: '今天也辛苦啦，慢慢挑',
+    };
+  }
+  if (hour < 18) {
+    return {
+      title: '下午好，把心意交给文字',
+      subline: '今天也辛苦啦，慢慢挑',
+    };
+  }
+  return {
+    title: '晚上好，把心意交给文字',
+    subline: '今天也辛苦啦，慢慢挑',
+  };
+}
+
 Page({
   data: {
     me: null,
@@ -17,6 +43,9 @@ Page({
     shareLink: null,
     bindingConfirmed: false,
     hasBindings: false,
+    greetingTitle: '',
+    greetingSubline: '',
+    topInset: 60,
   },
   async onLoad() {
     if (wx.showShareMenu) {
@@ -24,6 +53,19 @@ Page({
     }
   },
   async onShow() {
+    const windowInfo = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+    const menuRect = wx.getMenuButtonBoundingClientRect ? wx.getMenuButtonBoundingClientRect() : null;
+    const topInset = menuRect ? menuRect.bottom + 18 : (windowInfo.statusBarHeight || 20) + 52;
+    const greeting = getGreetingContent();
+    this.setData({
+      topInset,
+      greetingTitle: greeting.title,
+      greetingSubline: greeting.subline,
+    });
+    const tabBar = typeof this.getTabBar === 'function' ? this.getTabBar() : null;
+    if (tabBar) {
+      tabBar.setData({ selected: 0 });
+    }
     await this.bootstrap();
   },
   async bootstrap() {
@@ -49,7 +91,7 @@ Page({
     try {
       const shareLink = await createBindingShare();
       this.setData({ shareLink });
-      wx.showToast({ title: '邀请链接已生成', icon: 'success' });
+      wx.showToast({ title: '邀请口令已生成', icon: 'success' });
     } catch (error) {
       wx.showToast({ title: error.message || '生成失败', icon: 'none' });
     }
@@ -62,7 +104,7 @@ Page({
     }
     wx.setClipboardData({
       data: token,
-      success: () => wx.showToast({ title: '已复制 token', icon: 'success' }),
+      success: () => wx.showToast({ title: '口令已复制', icon: 'success' }),
       fail: () => wx.showToast({ title: '复制失败', icon: 'none' }),
     });
   },

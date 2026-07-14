@@ -20,6 +20,7 @@
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "tabBar": {
+    "custom": true,
     "color": "#8c6a5c",
     "selectedColor": "#b85b46",
     "backgroundColor": "#fffaf6",

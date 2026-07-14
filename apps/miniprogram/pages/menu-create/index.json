@@ -1,1 +1,6 @@
-{"navigationBarTitleText":"添加菜品"}
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "home-tabbar": "/custom-tab-bar/index"
+  }
+}

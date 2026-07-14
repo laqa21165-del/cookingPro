@@ -1,41 +1,50 @@
-<view class="container order-page">
-  <view class="card selector-card">
-    <view class="section-title">先选择 1 位厨师</view>
-    <view class="muted">一个订单只对应一位厨师，后续更容易履约。</view>
-    <scroll-view wx:if="{{hasBindings}}" class="chef-strip" scroll-x="true" show-scrollbar="false">
-      <view class="chef-strip-inner">
-        <button wx:for="{{boundChefs}}" wx:key="id" class="{{item.pillClass}}" data-id="{{item.id}}" bindtap="selectChef">{{item.name}}</button>
+<view class="screen-page">
+  
+  <view class="screen-stage">
+    <image class="screen-doodle star" src="/images/doodles/star.svg" mode="aspectFit" />
+    <image class="screen-doodle heart" src="/images/doodles/heart.svg" mode="aspectFit" />
+    <image class="screen-doodle spark" src="/images/doodles/spark.svg" mode="aspectFit" />
+
+    <view class="screen-header">
+      <view class="screen-title">点单</view>
+      <view class="screen-mark">☆</view>
+    </view>
+
+    <view class="screen-card selector-card">
+      <view class="section-title">先选择 1 位厨师</view>
+      <view class="muted">一个订单只对应一位厨师，后续更容易回应。</view>
+      <scroll-view wx:if="{{hasBindings}}" class="chef-strip" scroll-x="true" show-scrollbar="false">
+        <view class="chef-strip-inner">
+          <button wx:for="{{boundChefs}}" wx:key="id" class="{{item.pillClass}}" data-id="{{item.id}}" bindtap="selectChef">{{item.name}}</button>
+        </view>
+      </scroll-view>
+      <view wx:else class="empty-state order-empty-state">
+        <image class="empty-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
+        <view class="empty-title">还没有可点单的厨师</view>
+        <view class="muted">请先回到首页完成绑定，再来继续点菜。</view>
       </view>
-    </scroll-view>
-    <view wx:else class="empty-card">
-      <view class="empty-title">还没有可点单的厨师</view>
-      <view class="muted">请先回到首页或我的页面绑定关系。</view>
-      <button class="secondary-btn full-btn" bindtap="goHome">回到首页绑定</button>
     </view>
-  </view>
 
-  <view wx:if="{{selectedChefId}}" class="card search-card">
-    <view>
-      <view class="eyebrow">开始点菜</view>
-      <view class="section-title no-gap">{{selectedChefName}} 的菜单</view>
+    <view wx:if="{{selectedChefId}}" class="screen-card search-card">
+      <view class="eyebrow">搜索菜品</view>
+      <input class="input" placeholder="搜索菜名或描述" value="{{keyword}}" bindinput="onKeywordInput" />
     </view>
-    <input class="input" placeholder="搜索菜名或描述" value="{{keyword}}" bindinput="onKeywordInput" />
-  </view>
 
-  <view wx:if="{{selectedChefId}}" class="menu-list">
-    <view wx:if="{{hasFilteredMenu}}">
-      <view wx:for="{{filteredMenu}}" wx:key="id" class="card menu-card">
-        <image class="menu-image" src="{{item.imageUrl}}" mode="aspectFill" />
+    <block wx:if="{{selectedChefId && hasFilteredMenu}}">
+      <view wx:for="{{filteredMenu}}" wx:key="id" class="screen-card menu-card">
+        <view class="order-menu-image">
+          <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" />
+        </view>
         <view class="menu-main">
           <view class="menu-head">
             <view>
               <view class="menu-name">{{item.name}}</view>
               <view class="menu-desc">{{item.description}}</view>
             </view>
-            <view class="menu-price">{{item.textPrice}} 字</view>
+            <view class="menu-price">{{item.textPrice}} 字 / 份</view>
           </view>
           <view class="menu-foot">
-            <view class="menu-tag">{{item.tagText}}</view>
+            <view class="soft-pill {{item.status === 'inactive' ? 'neutral' : 'success'}}">{{item.tagText}}</view>
             <view class="stepper">
               <view class="step-btn {{item.subtractDisabled ? 'is-disabled' : ''}}" data-id="{{item.id}}" bindtap="subtractItem">-</view>
               <view class="step-count">{{item.quantityText}}</view>
@@ -44,44 +53,48 @@
           </view>
         </view>
       </view>
-    </view>
-    <view wx:else class="card empty-card">
+    </block>
+
+    <view wx:if="{{selectedChefId && !hasFilteredMenu}}" class="screen-card empty-state">
+      <image class="empty-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
       <view class="empty-title">没有找到匹配的菜品</view>
-      <view class="muted">换个关键词试试，或者先清空搜索。</view>
+      <view class="muted">换个关键词试试，或者清空搜索继续看。</view>
     </view>
-  </view>
 
-  <view wx:if="{{showCart}}" class="cart-panel card">
-    <view class="section-title">确认下单</view>
-    <view wx:for="{{cartItems}}" wx:key="menuItemId" class="cart-row">
-      <view class="cart-meta">
-        <view class="cart-name">{{item.name}}</view>
-        <view class="muted">{{item.textPriceText}}</view>
+    <view wx:if="{{showCart}}" class="cart-backdrop" bindtap="toggleCart"></view>
+    <view wx:if="{{showCart}}" class="cart-panel screen-card">
+      <view class="section-title">确认下单</view>
+      <view wx:for="{{cartItems}}" wx:key="menuItemId" class="cart-row">
+        <view class="cart-meta">
+          <view class="cart-name">{{item.name}}</view>
+          <view class="muted">{{item.textPriceText}}</view>
+        </view>
+        <view class="stepper">
+          <view class="step-btn {{item.subtractDisabled ? 'is-disabled' : ''}}" data-id="{{item.menuItemId}}" bindtap="subtractItem">-</view>
+          <view class="step-count">{{item.quantityText}}</view>
+          <view class="step-btn" data-id="{{item.menuItemId}}" bindtap="addItem">+</view>
+        </view>
       </view>
-      <view class="stepper">
-        <view class="step-btn {{item.subtractDisabled ? 'is-disabled' : ''}}" data-id="{{item.menuItemId}}" bindtap="subtractItem">-</view>
-        <view class="step-count">{{item.quantityText}}</view>
-        <view class="step-btn" data-id="{{item.menuItemId}}" bindtap="addItem">+</view>
+      <view class="payment-card">
+        <view class="payment-head">
+          <view class="section-title order-small-title">支付文字</view>
+          <view class="muted">至少需要 {{totalWords}} 个字</view>
+        </view>
+        <textarea class="textarea order-text" maxlength="-1" placeholder="写下此刻想说的话。" value="{{paymentText}}" bindinput="onPaymentInput"></textarea>
+        <view class="payment-foot">
+          <view class="{{paymentCountClass}}">当前 {{paymentCount}} / {{totalWords}} 字</view>
+          <button class="submit-btn" disabled="{{submitDisabled}}" bindtap="submitOrder">确认下单</button>
+        </view>
       </view>
     </view>
-    <view class="payment-card">
-      <view class="payment-head">
-        <view class="section-title small-title">文字支付</view>
-        <view class="muted">至少需要 {{totalWords}} 个字</view>
-      </view>
-      <textarea class="textarea order-text" maxlength="-1" placeholder="写下此刻想吃什么、为什么想吃，或者你想顺便说的话。" value="{{paymentText}}" bindinput="onPaymentInput"></textarea>
-      <view class="payment-foot">
-        <view class="{{paymentCountClass}}">当前 {{paymentCount}} / {{totalWords}} 字</view>
-        <button class="primary-btn submit-btn" disabled="{{submitDisabled}}" bindtap="submitOrder">满足字数后确认下单</button>
-      </view>
-    </view>
-  </view>
 
-  <view class="{{floatingCartClass}}" bindtap="toggleCart">
-    <view>
-      <view class="floating-title">{{totalQuantity}} 份菜品已加入购物车</view>
-      <view class="floating-copy">当前需要至少写 {{totalWords}} 个字才能下单</view>
+    <view class="{{floatingCartClass}}" bindtap="toggleCart">
+      <view>
+        <view class="floating-title">{{totalQuantity}} 份菜品已加入购物车</view>
+        <view class="floating-copy">当前需要至少写 {{totalWords}} 个字才能下单</view>
+      </view>
+      <view class="floating-action">{{cartActionText}}</view>
     </view>
-    <view class="floating-action">{{cartActionText}}</view>
   </view>
+  <home-tabbar></home-tabbar>
 </view>

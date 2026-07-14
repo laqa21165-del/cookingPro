@@ -1,1 +1,6 @@
-{"navigationBarTitleText":"点单"}
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "home-tabbar": "/custom-tab-bar/index"
+  }
+}

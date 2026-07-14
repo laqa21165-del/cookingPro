@@ -32,7 +32,6 @@ Page({
       wx.showToast({ title: '请先填写评价内容', icon: 'none' });
       return;
     }
-
     try {
       await createReview({
         orderId: this.data.orderId,

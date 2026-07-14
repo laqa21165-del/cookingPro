@@ -13,8 +13,8 @@ function formatOrder(order, me) {
 
   return {
     ...order,
-    statusText: order.status === 'pending' ? '待制作' : '已完成',
-    notifyStatusText: order.notifyStatus === 'sent' ? '已通知厨师' : '未开启微信提醒，已站内提醒',
+    statusText: order.status === 'pending' ? '进行中' : '已完成',
+    notifyStatusText: order.notifyStatus === 'sent' ? '已通知厨师' : '已站内提醒',
     reviews,
     hasReviews: reviews.length > 0,
     isChef,
