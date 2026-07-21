@@ -141,8 +141,9 @@ export class OrderService {
       include: {
         items: true,
         reviews: true,
-        customer: true,
-        chef: true,
+        // 仅返回展示所需的对方字段，剔除 openId 等敏感信息，避免被用于越权冒充
+        customer: { select: { id: true, nickname: true, avatarUrl: true } },
+        chef: { select: { id: true, nickname: true, avatarUrl: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -154,8 +155,9 @@ export class OrderService {
       include: {
         items: true,
         reviews: true,
-        customer: true,
-        chef: true,
+        // 仅返回展示所需的对方字段，剔除 openId 等敏感信息，避免被用于越权冒充
+        customer: { select: { id: true, nickname: true, avatarUrl: true } },
+        chef: { select: { id: true, nickname: true, avatarUrl: true } },
         journalSnapshot: true,
       },
     });

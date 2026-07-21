@@ -1,6 +1,9 @@
+import { getOrders } from '../services/order';
+
 Component({
   data: {
     selected: 0,
+    orderBadgeCount: 0,
     tabs: [
       {
         key: 'home',
@@ -41,11 +44,13 @@ Component({
   lifetimes: {
     attached() {
       this.syncSelected();
+      this.refreshOrderBadge();
     }
   },
   pageLifetimes: {
     show() {
       this.syncSelected();
+      this.refreshOrderBadge();
     }
   },
   methods: {
@@ -71,6 +76,25 @@ Component({
       }
       this.setData({ selected: Number(index) || 0 });
       wx.switchTab({ url: path });
+    },
+    async refreshOrderBadge() {
+      const seq = (this._badgeSeq || 0) + 1;
+      this._badgeSeq = seq;
+      try {
+        const rawOrders = await getOrders('chef');
+        // 已有更新的请求发出，丢弃本次过期响应，避免旧值覆盖新值
+        if (seq !== this._badgeSeq) return;
+        const count = (rawOrders || []).filter((o) => o.status === 'pending').length;
+        if (count !== this.data.orderBadgeCount) {
+          this.setData({ orderBadgeCount: count });
+        }
+      } catch (e) {
+        if (seq !== this._badgeSeq) return;
+        // 未登录或请求失败时静默隐藏角标
+        if (this.data.orderBadgeCount !== 0) {
+          this.setData({ orderBadgeCount: 0 });
+        }
+      }
     }
   }
 });

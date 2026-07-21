@@ -26,7 +26,8 @@ import { JournalModule } from './journal/journal.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'dev_secret_change_me'),
+        // 不设置兜底默认值：JWT_SECRET 缺失时启动即失败，避免误用已知弱密钥签发令牌
+        secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
           expiresIn: configService.get<string>('JWT_EXPIRES_IN', '7d') as any,
         },

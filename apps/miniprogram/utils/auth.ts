@@ -1,31 +1,14 @@
 import { request, saveToken } from './request';
-import { clearToken, setToken, setUser } from './store';
+import { setToken, setUser } from './store';
 
-const DEMO_OPEN_ID_KEY = 'word-order-demo-openid';
-
-export const DEMO_USERS = {
-  customer_demo: { openId: 'customer_demo', nickname: '今天想吃饭' },
-  chef_demo_a: { openId: 'chef_demo_a', nickname: '阿棕' },
-  chef_demo_b: { openId: 'chef_demo_b', nickname: '小桃' },
-};
-
-type DemoUserKey = keyof typeof DEMO_USERS;
-
-export function getSelectedDemoOpenId() {
-  return wx.getStorageSync(DEMO_OPEN_ID_KEY) || 'customer_demo';
-}
-
-export function setSelectedDemoOpenId(openId: string) {
-  wx.setStorageSync(DEMO_OPEN_ID_KEY, openId);
-}
-
-function getDemoProfile(openId: string) {
-  return DEMO_USERS[openId as DemoUserKey] || DEMO_USERS.customer_demo;
-}
-
-export async function loginDemoUser(openId = getSelectedDemoOpenId()) {
-  const profile = getDemoProfile(openId);
-  clearToken();
+/** 调起 wx.login 拿 code，发给后端换 token；成功则写入本地存储。 */
+export async function loginWithWechat(): Promise<string> {
+  const { code } = await new Promise<{ code: string }>((resolve, reject) => {
+    wx.login({
+      success: (res) => resolve(res as { code: string }),
+      fail: reject,
+    });
+  });
 
   const response = await request<{
     accessToken: string;
@@ -33,37 +16,26 @@ export async function loginDemoUser(openId = getSelectedDemoOpenId()) {
   }>({
     url: '/auth/login',
     method: 'POST',
-    data: {
-      code: `demo-${profile.openId}`,
-      nickname: profile.nickname,
-      mockOpenId: profile.openId,
-    },
+    data: { code },
   });
 
   saveToken(response.accessToken);
   setToken(response.accessToken);
   setUser(response.user);
-  setSelectedDemoOpenId(profile.openId);
-  wx.setStorageSync('word-order-login-openid', profile.openId);
-  return response.user;
+  wx.setStorageSync('word-order-login-openid', (response.user as Record<string, unknown>)?.openId);
+  return response.accessToken;
 }
 
-export async function ensureLogin() {
+/**
+ * 确保已登录：本地有 token 直接复用；否则用微信 code 静默登录。
+ * wx.login 不需要用户授权（不弹窗），可随页面自动发起。
+ */
+export async function ensureLogin(): Promise<string> {
   const token = wx.getStorageSync('word-order-token');
-  const selectedOpenId = getSelectedDemoOpenId();
-  const loginOpenId = wx.getStorageSync('word-order-login-openid');
-
-  if (token && loginOpenId === selectedOpenId) {
+  if (token) {
     return token;
   }
-
-  await loginDemoUser(selectedOpenId);
-  return wx.getStorageSync('word-order-token');
-}
-
-export async function switchDemoUser(openId: string) {
-  setSelectedDemoOpenId(openId);
-  return loginDemoUser(openId);
+  return loginWithWechat();
 }
 
 export async function refreshMe() {

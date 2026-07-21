@@ -53,6 +53,21 @@
       <view wx:else class="review-empty">还没有评价</view>
       <button wx:if="{{order.canReview}}" class="detail-secondary-btn" bindtap="goReview">去评价</button>
     </view>
+
+    <view class="detail-share-footer">
+      <button class="detail-share-btn" open-type="share">发给厨师</button>
+      <view class="detail-share-hint">把这条点单转给厨师，提醒 TA 尽快处理</view>
+    </view>
   </view>
+
+  <view wx:if="{{showChefShareModal}}" class="chef-share-mask">
+    <view class="chef-share-sheet">
+      <view class="chef-share-title">下单成功 🎉</view>
+      <view class="chef-share-desc">把这条点单转给厨师，提醒 TA 尽快来接单～</view>
+      <button class="chef-share-primary" open-type="share" bindtap="onChefShareTap">发给厨师</button>
+      <view class="chef-share-cancel" bindtap="closeChefShareModal">稍后再说</view>
+    </view>
+  </view>
+
   <home-tabbar></home-tabbar>
 </view>

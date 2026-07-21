@@ -28,16 +28,31 @@ Page({
     order: null,
     me: null,
     chefReply: '',
+    showChefShareModal: false,
   },
   async onLoad(options) {
     this.orderId = options.id;
+    this.isNew = options.new === '1';
+    this.shareModalShown = false;
+    if (wx.showShareMenu) {
+      wx.showShareMenu({ menus: ['shareAppMessage'] });
+    }
     await this.loadData();
+  },
+  async onShow() {
+    if (this.orderId) {
+      await this.loadData();
+    }
   },
   async loadData() {
     try {
       const [rawOrder, me] = await Promise.all([getOrderDetail(this.orderId), refreshMe()]);
       const order = formatOrder(rawOrder, me);
       this.setData({ order, me, chefReply: order.chefReply || '' });
+      if (this.isNew && !this.shareModalShown) {
+        this.shareModalShown = true;
+        this.setData({ showChefShareModal: true });
+      }
     } catch (error) {
       wx.showToast({ title: error.message || '加载失败', icon: 'none' });
     }
@@ -50,11 +65,36 @@ Page({
       await completeOrder(this.orderId, this.data.chefReply);
       wx.showToast({ title: '订单已完成', icon: 'success' });
       await this.loadData();
+      const tabBar = typeof this.getTabBar === 'function' ? this.getTabBar() : null;
+      if (tabBar && typeof tabBar.refreshOrderBadge === 'function') {
+        tabBar.refreshOrderBadge();
+      }
     } catch (error) {
       wx.showToast({ title: error.message || '操作失败', icon: 'none' });
     }
   },
   goReview() {
     wx.navigateTo({ url: `/pages/review/index?orderId=${this.orderId}` });
+  },
+  onChefShareTap() {
+    this.setData({ showChefShareModal: false });
+  },
+  closeChefShareModal() {
+    this.setData({ showChefShareModal: false });
+  },
+  onShareAppMessage() {
+    const order = this.data.order || {};
+    const items = (order.items || [])
+      .map((it) => `${it.name} x${it.quantity}`)
+      .join('、');
+    const shortId = String(this.orderId || '').slice(-4).toUpperCase();
+    let title = `【新点单 ${shortId}】${items || '点了一单，快来看看～'}`;
+    if (title.length > 60) {
+      title = title.slice(0, 57) + '…';
+    }
+    return {
+      title,
+      path: `/pages/order-detail/index?id=${this.orderId}`,
+    };
   },
 });

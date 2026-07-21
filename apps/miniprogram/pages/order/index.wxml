@@ -19,7 +19,7 @@
         </view>
       </scroll-view>
       <view wx:else class="empty-state order-empty-state">
-        <image class="empty-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
+        <image class="empty-puppy" src="/images/puppy.png" mode="aspectFit" />
         <view class="empty-title">还没有可点单的厨师</view>
         <view class="muted">请先回到首页完成绑定，再来继续点菜。</view>
       </view>
@@ -56,7 +56,7 @@
     </block>
 
     <view wx:if="{{selectedChefId && !hasFilteredMenu}}" class="screen-card empty-state">
-      <image class="empty-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
+      <image class="empty-puppy" src="/images/puppy.png" mode="aspectFit" />
       <view class="empty-title">没有找到匹配的菜品</view>
       <view class="muted">换个关键词试试，或者清空搜索继续看。</view>
     </view>

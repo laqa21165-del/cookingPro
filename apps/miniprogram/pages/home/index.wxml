@@ -20,10 +20,10 @@
       <view class="hero-main">
         <view class="hero-title">今天想吃什么？</view>
         <view class="hero-desc">用文字付款，每一次点单都被认真阅读、好好回应。</view>
-        <view class="hero-note">汪，今天的心意，我来替你送到。</view>
+        <view class="hero-note">今天的心意，我来替你送到。</view>
       </view>
       <view class="hero-art">
-        <image class="hero-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
+        <image class="hero-puppy" src="/images/puppy.png" mode="aspectFit" />
       </view>
     </view>
 
@@ -78,6 +78,35 @@
       <view wx:else class="empty-card">
         <view class="empty-title">还没有绑定的厨师</view>
         <view class="empty-copy">先通过邀请或口令完成绑定，再回来开始点单。</view>
+      </view>
+    </view>
+
+    <view class="todo-section">
+      <view class="todo-head">
+        <view class="todo-title">待办订单</view>
+        <view wx:if="{{hasTodoOrders}}" class="todo-more" bindtap="goOrders">查看全部 →</view>
+      </view>
+
+      <view wx:if="{{hasTodoOrders}}" class="todo-list">
+        <view
+          wx:for="{{todoOrders}}"
+          wx:key="id"
+          class="todo-card"
+          data-id="{{item.id}}"
+          bindtap="goTodoOrder"
+        >
+          <view class="todo-card-top">
+            <text class="todo-id">订单 {{item.shortId}}</text>
+            <text wx:if="{{item.unread}}" class="todo-badge">未读</text>
+          </view>
+          <view class="todo-items">{{item.itemsText}}</view>
+          <view class="todo-meta">共 {{item.itemCount}} 份 · {{item.createdAtText}}</view>
+        </view>
+      </view>
+
+      <view wx:else class="empty-card">
+        <view class="empty-title">暂时没有待办订单</view>
+        <view class="empty-copy">新的订单会在顾客下单后自动出现在这里。</view>
       </view>
     </view>
   </view>

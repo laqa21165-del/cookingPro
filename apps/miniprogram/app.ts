@@ -3,7 +3,7 @@ import { getToken, getUser } from './utils/store';
 
 App({
   globalData: {
-    apiBaseUrl: 'http://127.0.0.1:3000/api/v1',
+    apiBaseUrl: 'http://192.168.0.8:3000/api/v1',
     token: getToken(),
     user: getUser(),
   },

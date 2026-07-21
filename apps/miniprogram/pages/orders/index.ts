@@ -7,40 +7,28 @@ import { getOrders } from '../../services/order';
  * 纯字符串截取 + Date 兜底，不依赖任何 JS 引擎特性。
  */
 function formatDateTime(value) {
-  // 1) 空值 → 原样返回空
   if (!value && value !== 0) return '';
-
-  var s = String(value);
-
-  // 2) ISO 字符串直接截取（最快路径，不经过 new Date）
-  //    匹配 2026-07-13T10:06:55 或 2026-07-13T10:06:55.123Z 或带时区偏移
-  var isoMatch = s.match(
-    /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})/
-  );
-  if (isoMatch) {
-    return isoMatch[1] + '-' + isoMatch[2] + '-' + isoMatch[3] +
-           ' ' + isoMatch[4] + ':' + isoMatch[5] + ':' + isoMatch[6];
-  }
-
-  // 3) 纯数字（Unix 时间戳秒或毫秒）
+  var d;
   var num = Number(value);
-  if (!isNaN(num)) {
-    var d = new Date(num > 1e12 ? num : num * 1000);
-    if (!isNaN(d.getTime())) {
-      var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
-      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
-             ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
-    }
+  if (!isNaN(num) && String(value).trim() !== '') {
+    // 数字时间戳（秒或毫秒）：统一转成毫秒后交给 new Date，按设备本地时区解析
+    d = new Date(num > 1e12 ? num : num * 1000);
+  } else {
+    // ISO 字符串（如 2026-07-13T10:06:55.123Z）：new Date 会自动按本地时区换算
+    d = new Date(value);
   }
-
-  // 4) 全部失败 → 原样回退显示
-  return s;
+  if (isNaN(d.getTime())) {
+    return String(value);
+  }
+  var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+         ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
 }
 
 function formatOrders(orders = [], orderRole = 'customer') {
   return orders.map((order) => ({
     ...order,
-    shortId: String(order.id || '').slice(0, 4).toUpperCase(),
+    shortId: String(order.id || '').slice(-4).toUpperCase(),
     statusText: order.status === 'pending' ? '进行中' : '已完成',
     statusClass: order.status === 'pending' ? 'soft-pill primary' : 'soft-pill success',
     itemsText: (order.items || []).map((sub) => `${sub.name} x${sub.quantity}`).join(' ・ '),
@@ -52,18 +40,21 @@ function formatOrders(orders = [], orderRole = 'customer') {
 
 Page({
   data: {
-    orderRole: 'customer',
+    orderRole: 'chef',
     orders: [],
     chefTabClass: 'mode-tab mode-tab-active',
     customerTabClass: 'mode-tab',
     hasOrders: false,
-    emptyTitle: '这里还没有订单',
-    emptyCopy: '先去点一份菜，再回来看看完整闭环。',
+    emptyTitle: '这里还没有收到订单',
+    emptyCopy: '有人下单后，新的订单会出现在这里。',
   },
   async onShow() {
     const tabBar = typeof this.getTabBar === 'function' ? this.getTabBar() : null;
     if (tabBar) {
       tabBar.setData({ selected: 1 });
+      if (typeof tabBar.refreshOrderBadge === 'function') {
+        tabBar.refreshOrderBadge();
+      }
     }
     await this.loadOrders();
   },

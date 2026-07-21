@@ -28,6 +28,7 @@ function recalc(page) {
   });
 
   const filteredMenu = (page.data.menuItems || [])
+    .filter((item) => item.status !== 'inactive')
     .filter((item) => !keyword || item.name.includes(keyword) || (item.description || '').includes(keyword))
     .map((item) => {
       const quantity = cartMap[item.id] || 0;
@@ -207,14 +208,8 @@ Page({
       this.setData({ cartItems: [], showCart: false, paymentText: '' });
       recalc(this);
 
-      wx.showModal({
-        title: '下单成功',
-        content: order.notifyStatus === 'sent' ? '文字已经送达，系统也通知了厨师。' : '文字已经送达，厨师暂未开启提醒，已改为站内提示。',
-        showCancel: false,
-        success: () => {
-          wx.redirectTo({ url: `/pages/order-detail/index?id=${order.id}` });
-        },
-      });
+      wx.showToast({ title: '下单成功', icon: 'success' });
+      wx.redirectTo({ url: `/pages/order-detail/index?id=${order.id}&new=1` });
     } catch (error) {
       wx.showToast({ title: error.message || '下单失败', icon: 'none' });
     }

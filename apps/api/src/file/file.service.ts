@@ -47,7 +47,11 @@ export class FileService implements OnModuleInit {
       throw new BadRequestException('图片内容不能为空');
     }
 
-    const extension = (filePart.filename?.split('.').pop() || 'png').toLowerCase();
+    // 按文件头（magic bytes）校验真实类型，忽略客户端文件名后缀，防止伪装成图片上传恶意文件
+    const extension = detectImageExtension(fileBuffer);
+    if (!extension) {
+      throw new BadRequestException('仅支持 PNG / JPEG / WebP / GIF 图片');
+    }
     const storageKey = `${ownerId}/${randomUUID()}.${extension}`;
 
     try {
@@ -74,4 +78,28 @@ export class FileService implements OnModuleInit {
       throw new InternalServerErrorException(`上传文件失败: ${String(error)}`);
     }
   }
+}
+
+/**
+ * 依据文件头（magic bytes）判定图片类型，仅允许 PNG / JPEG / WebP / GIF。
+ * 不信任客户端传入的文件名后缀或 mimetype，从根本上杜绝伪装图片上传恶意文件。
+ */
+function detectImageExtension(buf: Buffer): string | null {
+  if (buf.length >= 8 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) {
+    return 'png';
+  }
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) {
+    return 'jpg';
+  }
+  if (
+    buf.length >= 12 &&
+    buf.toString('ascii', 0, 4) === 'RIFF' &&
+    buf.toString('ascii', 8, 12) === 'WEBP'
+  ) {
+    return 'webp';
+  }
+  if (buf.length >= 6 && buf.toString('ascii', 0, 3) === 'GIF' && buf[3] === 0x38) {
+    return 'gif';
+  }
+  return null;
 }

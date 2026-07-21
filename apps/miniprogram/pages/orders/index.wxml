@@ -24,7 +24,7 @@
     <block wx:if="{{hasOrders}}">
       <view wx:for="{{orders}}" wx:key="id" class="screen-card order-card" data-id="{{item.id}}" bindtap="goDetail">
         <view class="order-head">
-          <view class="order-title">订单 A{{item.shortId}}</view>
+          <view class="order-title">订单 {{item.shortId}}</view>
           <view class="order-state-group">
             <view wx:if="{{item.showNewBadge}}" class="new-badge">新订单</view>
             <view class="{{item.statusClass}}">{{item.statusText}}</view>
@@ -39,7 +39,7 @@
     </block>
 
     <view wx:else class="screen-card empty-order-card empty-state">
-      <image class="empty-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
+      <image class="empty-puppy" src="/images/puppy.png" mode="aspectFit" />
       <view class="empty-title">{{emptyTitle}}</view>
       <view class="muted">{{emptyCopy}}</view>
       <button class="secondary-btn full-btn" bindtap="goOrder">去点菜</button>

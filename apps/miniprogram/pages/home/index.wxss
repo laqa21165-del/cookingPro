@@ -42,7 +42,7 @@
 }
 
 .doodle-heart {
-  top: 630rpx;
+  top: 600rpx;
   left: 38rpx;
   width: 34rpx;
   height: 34rpx;
@@ -57,7 +57,7 @@
 }
 
 .doodle-wave {
-  top: 640rpx;
+  top: 600rpx;
   right: 90rpx;
   width: 86rpx;
   height: 28rpx;
@@ -69,7 +69,8 @@
 .start-btn,
 .chip-row,
 .inline-notice,
-.recent-section {
+.recent-section,
+.todo-section {
   position: relative;
   z-index: 2;
 }
@@ -149,8 +150,8 @@
   display: flex;
   width: 100%;
   padding: 0;
-  margin: 90rpx 0 90rpx;
-  height: 130rpx;
+  margin: 40rpx 0 40rpx;
+  height: 100rpx;
   border: 0;
   border-radius: 32rpx;
   background: #C2674E;
@@ -269,7 +270,7 @@
 }
 
 .recent-section {
-  margin-top: 70rpx;
+  margin-top: 50rpx;
   padding-bottom: 20rpx;
 }
 
@@ -282,6 +283,80 @@
 
 .recent-subtitle {
   margin-top: 15rpx;
+  color: #8E6F67;
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.todo-section {
+  margin-top: 40rpx;
+  padding-bottom: 20rpx;
+}
+
+.todo-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.todo-title {
+  color: #3B251F;
+  font-size: 36rpx;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.todo-more {
+  color: #C2674E;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.todo-list {
+  margin-top: 18rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.todo-card {
+  padding: 22rpx 24rpx;
+  border: 3rpx solid #C9A899;
+  border-radius: 26rpx;
+  background: #FFFDFB;
+  box-sizing: border-box;
+}
+
+.todo-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.todo-id {
+  color: #C2674E;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.todo-badge {
+  padding: 2rpx 12rpx;
+  border-radius: 999rpx;
+  background: #F6E0D7;
+  color: #A8533D;
+  font-size: 20rpx;
+  font-weight: 600;
+}
+
+.todo-items {
+  margin-top: 12rpx;
+  color: #3B251F;
+  font-size: 26rpx;
+  line-height: 1.45;
+}
+
+.todo-meta {
+  margin-top: 8rpx;
   color: #8E6F67;
   font-size: 22rpx;
   line-height: 1.5;

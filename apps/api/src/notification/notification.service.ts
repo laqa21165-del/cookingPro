@@ -65,6 +65,8 @@ export class NotificationService {
       chefOpenId: order.chef.openId,
       customerNickname: order.customer.nickname,
       summary,
+      orderShortId: String(order.id).slice(-4).toUpperCase(),
+      status: order.status,
     });
 
     await this.domainEventService.publish('notification.order_created', {

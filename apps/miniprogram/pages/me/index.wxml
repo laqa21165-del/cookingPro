@@ -13,30 +13,23 @@
       <view class="user-top">
         <view class="user-avatar">{{avatarText}}</view>
         <view class="user-meta">
-          <view class="user-name">{{me.nickname}}</view>
+          <input
+            class="user-name-input"
+            type="nickname"
+            value="{{me.nickname || ''}}"
+            placeholder="点击设置昵称"
+            placeholder-class="user-name-placeholder"
+            bindblur="onNicknameBlur"
+            bindconfirm="onNicknameBlur"
+            confirm-type="done"
+            maxlength="30"
+          />
           <view class="user-role">{{roleLabel}}</view>
         </view>
       </view>
       <view class="user-stats">
         <view class="stat-chip">绑定厨师 {{customerBindings.length}}</view>
         <view class="stat-chip stat-chip-green">我的顾客 {{chefBindings.length}}</view>
-      </view>
-    </view>
-
-    <view class="screen-card settings-card">
-      <view class="eyebrow">个人设置</view>
-      <view class="section-title">当前原型支持演示身份切换</view>
-      <view class="muted">你可以在这里切换成点单者或厨师身份，继续走完整闭环。</view>
-      <view class="tip-card">
-        <image class="tip-icon" src="/images/puppy.png" mode="aspectFit" />
-        <view class="tip-text">汪，我也会帮你看好绑定关系。</view>
-      </view>
-    </view>
-
-    <view class="screen-card">
-      <view class="section-title">演示身份</view>
-      <view class="identity-list">
-        <button wx:for="{{demoOptions}}" wx:key="openId" class="{{item.buttonClass}}" data-id="{{item.openId}}" bindtap="switchIdentity">{{item.label}}</button>
       </view>
     </view>
 
@@ -64,9 +57,15 @@
       </view>
 
       <view wx:if="{{!hasAnyBindings}}" class="binding-empty empty-state">
-        <image class="empty-puppy" src="/images/peeking-puppy.png" mode="aspectFit" />
+        <image class="empty-puppy" src="/images/puppy.png" mode="aspectFit" />
         <view class="muted">当前还没有绑定关系，可以回首页继续绑定。</view>
       </view>
+    </view>
+
+    <view wx:if="{{canSubscribe}}" class="screen-card">
+      <view class="section-title">新订单提醒</view>
+      <view class="muted">开启后，有顾客下单会通过微信通知你。</view>
+      <button class="binding-delete" bindtap="subscribeChefMessage">开启新订单提醒</button>
     </view>
   </view>
 </view>

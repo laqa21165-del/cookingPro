@@ -1,7 +1,21 @@
 import { clearToken, getToken, setToken } from './store';
 
-const BASE_URL = 'http://127.0.0.1:3000/api/v1';
+// 生产域名（上线前把 api.<你的域名> 换成你已备案的 HTTPS 域名，仅改这一处）
+const PROD_BASE_URL = 'https://api.<你的域名>/api/v1';
+// 开发版联调用内网直连（同一 WiFi 下后端 IP）
+const DEV_BASE_URL = 'http://192.168.0.8:3000/api/v1';
 
+function resolveBaseUrl(): string {
+  try {
+    const env = (wx.getAccountInfoSync() as any).miniProgram.envVersion; // 'develop' | 'trial' | 'release'
+    if (env === 'develop') return DEV_BASE_URL; // 开发版 / 真机调试 → 内网
+    return PROD_BASE_URL; // 体验版 / 正式版 → 生产
+  } catch (e) {
+    return PROD_BASE_URL;
+  }
+}
+
+const BASE_URL = resolveBaseUrl();
 type RequestOptions = {
   url: string;
   method?: string;

@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "",
+  "navigationBarTitleText": "订单详情",
   "usingComponents": {
     "home-tabbar": "/custom-tab-bar/index"
   }

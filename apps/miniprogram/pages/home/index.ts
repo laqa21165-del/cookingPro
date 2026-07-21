@@ -1,6 +1,7 @@
 ﻿// @ts-nocheck
 import { ensureLogin, refreshMe } from '../../utils/auth';
 import { createBindingShare, getBindings } from '../../services/binding';
+import { getOrders } from '../../services/order';
 
 function formatBindings(bindings = []) {
   return bindings.map((item) => ({
@@ -36,6 +37,39 @@ function getGreetingContent() {
   };
 }
 
+function formatDateTime(value) {
+  if (!value && value !== 0) return '';
+  var d;
+  var num = Number(value);
+  if (!isNaN(num) && String(value).trim() !== '') {
+    // 数字时间戳（秒或毫秒）：统一转成毫秒后交给 new Date，按设备本地时区解析
+    d = new Date(num > 1e12 ? num : num * 1000);
+  } else {
+    // ISO 字符串（如 2026-07-13T10:06:55.123Z）：new Date 会自动按本地时区换算
+    d = new Date(value);
+  }
+  if (isNaN(d.getTime())) {
+    return String(value);
+  }
+  var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+         ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+
+function formatTodoOrders(orders = []) {
+  return (orders || [])
+    .filter((order) => order.status === 'pending')
+    .slice(0, 3)
+    .map((order) => ({
+      id: order.id,
+      shortId: String(order.id || '').slice(-4).toUpperCase(),
+      itemsText: (order.items || []).map((sub: any) => `${sub.name} x${sub.quantity}`).join(' ・ '),
+      itemCount: (order.items || []).reduce((sum: number, sub: any) => sum + (sub.quantity || 0), 0),
+      createdAtText: formatDateTime(order.createdAt),
+      unread: !!order.unreadForChef,
+    }));
+}
+
 Page({
   data: {
     me: null,
@@ -46,6 +80,8 @@ Page({
     greetingTitle: '',
     greetingSubline: '',
     topInset: 60,
+    todoOrders: [],
+    hasTodoOrders: false,
   },
   async onLoad() {
     if (wx.showShareMenu) {
@@ -71,7 +107,7 @@ Page({
   async bootstrap() {
     try {
       await ensureLogin();
-      const [me, bindings] = await Promise.all([refreshMe(), getBindings()]);
+      const [me, bindings, chefOrders] = await Promise.all([refreshMe(), getBindings(), getOrders('chef')]);
       const customerBindings = formatBindings(me.bindings?.asCustomer || bindings.asCustomer || []);
       const bindingConfirmed = !!wx.getStorageSync('binding-confirmed');
       if (bindingConfirmed) {
@@ -82,7 +118,13 @@ Page({
         customerBindings,
         bindingConfirmed,
         hasBindings: customerBindings.length > 0,
+        todoOrders: formatTodoOrders(chefOrders),
+        hasTodoOrders: (chefOrders || []).some((order) => order.status === 'pending'),
       });
+      const tabBar = typeof this.getTabBar === 'function' ? this.getTabBar() : null;
+      if (tabBar && typeof tabBar.refreshOrderBadge === 'function') {
+        tabBar.refreshOrderBadge();
+      }
     } catch (error) {
       wx.showToast({ title: error.message || '加载失败', icon: 'none' });
     }
@@ -117,6 +159,13 @@ Page({
   chooseChef(event) {
     const chefId = event.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/order/index?chefId=${chefId}` });
+  },
+  goOrders() {
+    wx.switchTab({ url: '/pages/orders/index' });
+  },
+  goTodoOrder(event) {
+    const id = event.currentTarget.dataset.id;
+    wx.navigateTo({ url: `/pages/order-detail/index?id=${id}` });
   },
   onShareAppMessage() {
     const shareLink = this.data.shareLink;

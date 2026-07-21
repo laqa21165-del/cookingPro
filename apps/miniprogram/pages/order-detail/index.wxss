@@ -70,3 +70,91 @@
   color: var(--muted);
   font-size: 24rpx;
 }
+
+.detail-share-footer {
+  margin-top: 28rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.detail-share-btn {
+  width: 100%;
+  height: 84rpx;
+  line-height: 84rpx;
+  border-radius: 999rpx;
+  background: var(--primary);
+  color: #fffdfb;
+  font-size: 30rpx;
+  font-weight: 700;
+  margin: 0;
+}
+
+.detail-share-btn::after {
+  border: none;
+}
+
+.detail-share-hint {
+  font-size: 22rpx;
+  color: var(--muted);
+}
+
+.chef-share-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(59, 37, 31, 0.45);
+  display: flex;
+  align-items: flex-end;
+  z-index: 50;
+}
+
+.chef-share-sheet {
+  width: 100%;
+  background: #fffdfb;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 36rpx 32rpx calc(36rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.chef-share-title {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.chef-share-desc {
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.chef-share-primary {
+  margin-top: 28rpx;
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 999rpx;
+  background: var(--primary);
+  color: #fffdfb;
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.chef-share-primary::after {
+  border: none;
+}
+
+.chef-share-cancel {
+  margin-top: 22rpx;
+  font-size: 28rpx;
+  color: var(--muted);
+  padding: 10rpx 0;
+}
