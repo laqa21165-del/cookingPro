@@ -10,6 +10,24 @@ apps/api/uploads/
 .env.*
 !.env.example
 
+# 微信开发者工具私有配置
+apps/miniprogram/project.private.config.json
+
+# 临时补丁 / 工作目录
+codex_homepage_*/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 日志
+*.log
+npm-debug.log*
+
+# 本地环境覆盖
+*.local
+
 # Agent / IDE internal state (not project source)
 .workbuddy/
 .agents/

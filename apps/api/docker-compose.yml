@@ -1,0 +1,76 @@
+# 文字点单后端 · 一键起全套依赖
+# 用法：在 apps/api 目录
+#   docker compose up -d --build
+# 生产环境变量请替换下方所有 <请替换> 占位符
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    # 2G 内存服务器必做调优：降低内存占用避免 OOM；4G 以上可删除 command / deploy 两段
+    command:
+      - "postgres"
+      - "-c" - "shared_buffers=256MB"
+      - "-c" - "effective_cache_size=768MB"
+      - "-c" - "work_mem=16MB"
+      - "-c" - "maintenance_work_mem=64MB"
+      - "-c" - "max_connections=50"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: <请替换:强密码>
+      POSTGRES_DB: mylove
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # 限制 PG 内存上限，防止失控拖垮整台机器
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: <请替换:minio账号>
+      MINIO_ROOT_PASSWORD: <请替换:强密码>
+    volumes:
+      - miniodata:/data
+    restart: unless-stopped
+
+  api:
+    build: .
+    # 先用 schema 建表（本项目无 migration 文件，用 db push 幂等建表），再启动
+    command: sh -c "npx prisma db push --skip-generate && node dist/main.js"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://postgres:<请替换:强密码>@postgres:5432/mylove?schema=public
+      REDIS_URL: redis://redis:6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_USE_SSL: "false"
+      MINIO_ACCESS_KEY: <请替换:minio账号>
+      MINIO_SECRET_KEY: <请替换:强密码>
+      MINIO_BUCKET: word-order
+      MINIO_PUBLIC_BASE_URL: https://oss.<你的域名>
+      APP_URL: https://api.<你的域名>
+      WECHAT_APP_ID: <请替换:真实AppID>
+      WECHAT_APP_SECRET: <请替换:真实AppSecret>
+      WECHAT_MESSAGE_TEMPLATE_ID: <请替换:模板ID>
+      AUTH_ALLOW_MOCK_WECHAT: "false"
+      JWT_SECRET: <请替换:openssl rand -base64 32 生成的随机串>
+      JWT_EXPIRES_IN: "2h"
+      ENABLE_SWAGGER_UI: "false"
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  miniodata:
