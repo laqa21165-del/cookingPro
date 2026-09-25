@@ -8,12 +8,17 @@ services:
     image: postgres:16-alpine
     # 2G 内存服务器必做调优：降低内存占用避免 OOM；4G 以上可删除 command / deploy 两段
     command:
-      - "postgres"
-      - "-c" - "shared_buffers=256MB"
-      - "-c" - "effective_cache_size=768MB"
-      - "-c" - "work_mem=16MB"
-      - "-c" - "maintenance_work_mem=64MB"
-      - "-c" - "max_connections=50"
+      - postgres
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - effective_cache_size=768MB
+      - -c
+      - work_mem=16MB
+      - -c
+      - maintenance_work_mem=64MB
+      - -c
+      - max_connections=50
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: <请替换:强密码>
