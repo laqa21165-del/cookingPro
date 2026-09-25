@@ -53,7 +53,7 @@ services:
   api:
     build: .
     # 先用 schema 建表（本项目无 migration 文件，用 db push 幂等建表），再启动
-    command: sh -c "npx prisma db push --skip-generate && node dist/main.js"
+    command: sh -c "npx prisma db push --skip-generate && node dist/src/main.js"
     # 只绑 127.0.0.1：公网流量一律走 Caddy 反代，API 不直接暴露
     ports:
       - "127.0.0.1:3000:3000"
