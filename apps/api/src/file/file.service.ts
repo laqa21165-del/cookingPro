@@ -9,6 +9,7 @@ import { PrismaService } from '../common/prisma.service';
 export class FileService implements OnModuleInit {
   private readonly logger = new Logger(FileService.name);
   private readonly minioClient: MinioClient;
+  private readonly presignClient: MinioClient;
   private readonly bucket: string;
 
   constructor(
@@ -16,13 +17,32 @@ export class FileService implements OnModuleInit {
     private readonly prismaService: PrismaService,
   ) {
     this.bucket = this.configService.get<string>('MINIO_BUCKET', 'word-order');
+    const accessKey = this.configService.get<string>('MINIO_ACCESS_KEY', 'minioadmin');
+    const secretKey = this.configService.get<string>('MINIO_SECRET_KEY', 'minioadmin');
     this.minioClient = new MinioClient({
       endPoint: this.configService.get<string>('MINIO_ENDPOINT', 'localhost'),
       port: Number(this.configService.get<number>('MINIO_PORT', 9000)),
       useSSL: this.configService.get<string>('MINIO_USE_SSL', 'false') === 'true',
-      accessKey: this.configService.get<string>('MINIO_ACCESS_KEY', 'minioadmin'),
-      secretKey: this.configService.get<string>('MINIO_SECRET_KEY', 'minioadmin'),
+      accessKey,
+      secretKey,
     });
+
+    // 预签名 URL 的签名绑定主机名：默认客户端签出的是容器内地址（如 http://minio:9000/...），
+    // 外部无法访问。若配置了 MINIO_PUBLIC_BASE_URL（公网域名，经 Caddy 反代回 MinIO），
+    // 则用公网主机名签名，生成 https://oss.xxx/... 形式的可公网访问 URL。
+    const publicBase = this.configService.get<string>('MINIO_PUBLIC_BASE_URL', '');
+    if (publicBase) {
+      const parsed = new URL(publicBase);
+      this.presignClient = new MinioClient({
+        endPoint: parsed.hostname,
+        port: parsed.port ? Number(parsed.port) : parsed.protocol === 'https:' ? 443 : 80,
+        useSSL: parsed.protocol === 'https:',
+        accessKey,
+        secretKey,
+      });
+    } else {
+      this.presignClient = this.minioClient;
+    }
   }
 
   async onModuleInit() {
@@ -62,7 +82,7 @@ export class FileService implements OnModuleInit {
         fileBuffer.length,
         { 'Content-Type': filePart.mimetype || 'application/octet-stream' },
       );
-      const url = await this.minioClient.presignedGetObject(this.bucket, storageKey, 60 * 60 * 24 * 7);
+      const url = await this.presignClient.presignedGetObject(this.bucket, storageKey, 60 * 60 * 24 * 7);
       const asset = await this.prismaService.fileAsset.create({
         data: {
           ownerId,
