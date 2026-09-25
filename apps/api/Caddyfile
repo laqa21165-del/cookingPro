@@ -1,0 +1,15 @@
+# 文字点单 · 反向代理 + 自动 HTTPS
+# 用法：Caddy 装好后
+#   caddy reload --config /path/to/Caddyfile
+# 前提：api.<域名> 与 oss.<域名> 已解析到本服务器 A 记录，且已完成 ICP 备案
+# Caddy 会自动申请并续期 Let's Encrypt 证书
+
+api.<你的域名> {
+    encode gzip
+    reverse_proxy localhost:3000
+}
+
+oss.<你的域名> {
+    encode gzip
+    reverse_proxy localhost:9000
+}
